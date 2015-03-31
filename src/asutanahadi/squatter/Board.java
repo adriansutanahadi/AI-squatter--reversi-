@@ -1,3 +1,4 @@
+package asutanahadi.squatter;
 //Board Class for the game of squatter coded by Denis Thamrin
 import java.awt.Point;
 import java.util.ArrayList;
@@ -55,21 +56,21 @@ public class Board {
 
 	// insert cell content at the specific row
 	// row STAETS FROM 0
-	public CellContent[][] addContent(String input, Integer row) throws Exception{
+	public CellContent[][] addContent(String input, Integer y) throws Exception{
 		String[] input_array = input.split(" ");
 		Integer lengthOfInput = input_array.length;
 		if (lengthOfInput != this.dimension){
-			throw new Exception(String.format("Expected %d number of columns at row %d.",this.dimension,row));
+			throw new Exception(String.format("Expected %d number of columns at row %d.",this.dimension,y));
 		};
-		for (int i = 0; i< dimension; i ++){
+		for (int x = 0; x < dimension; x++){
 			
 				// Add to grid
-				CellContent cellcontent = stringToCellContent(input_array[i]);
-				grid[row][i] = cellcontent;
+				CellContent cellcontent = stringToCellContent(input_array[x]);
+				grid[x][y] = cellcontent;
 				
 				// Add position of captured cells to map
 				if (cellcontent == CellContent.CAPTURED) {
-					capturedCellsMap.add(new Point(row,i));
+					capturedCellsMap.add(new Point(x,y));
 				}
 				
 				// Check if there is a free cell
@@ -92,8 +93,8 @@ public class Board {
 	}
 	
 	private boolean checkCellValidity(Point p){
-		if ((p.x < this.dimension) && (p.x > 0)
-				&& (p.y < this.dimension) && (p.y > 0)) {
+		if ((p.x < this.dimension) && (p.x >= 0)
+				&& (p.y < this.dimension) && (p.y >= 0)) {
 			return true;
 		}
 		return false;
@@ -103,7 +104,7 @@ public class Board {
 		Point check;
 		ArrayList<CellContent> surroundingCell = new ArrayList<CellContent>();
 		// check upwards
-		check = p;
+		check = new Point(p);
 		check.y -= 1;
 		while (checkCellValidity(check)){
 			if (grid[check.x][check.y] == CellContent.CAPTURED){
@@ -111,11 +112,12 @@ public class Board {
 				continue;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
+				break;
 			}
 		}
 		
 		// check downwards
-		check = p;
+		check = new Point(p);
 		check.y += 1;
 		while (checkCellValidity(check)){
 			if (grid[check.x][check.y] == CellContent.CAPTURED){
@@ -123,11 +125,12 @@ public class Board {
 				continue;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
+				break;
 			}
 		}
 		
 		// check leftwards
-		check = p;
+		check = new Point(p);
 		check.x -= 1;
 		while (checkCellValidity(check)){
 			if (grid[check.x][check.y] == CellContent.CAPTURED){
@@ -135,11 +138,12 @@ public class Board {
 				continue;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
+				break;
 			}
 		}
 		
 		// check rightwards
-		check = p;
+		check = new Point(p);
 		check.x += 1;
 		while (checkCellValidity(check)){
 			if (grid[check.x][check.y] == CellContent.CAPTURED){
@@ -147,11 +151,12 @@ public class Board {
 				continue;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
+				break;
 			}
 		}
 		
 		
-		// check 4 item in surrounding cell & 4 same items in the array
+		// check 4 items in surrounding cell & 4 same items in the array
 		Integer black = 0;
 		Integer white = 0;
 		for(CellContent c : surroundingCell) {
