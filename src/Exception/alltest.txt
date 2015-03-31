@@ -1,0 +1,48 @@
+5
++ + + + +
++ + + + +
++ + + + +
++ + + + +
++ + + + +
+
+None
+0
+0
+
+// 1 row extra
+5
++ + + + + 
++ + + + +
++ + + + +
++ + + + +
++ + + + +
++ + + + +
+Exception
+
+// Draw
+7
+W W W W W W W
+B B B B B B B
+W W W W W W W
+B B B B B B B
+W W W W W W W
+B B B B B B B
+W W W W W W W
+
+None
+0
+0
+
+7 
+W W W B B B B
+W - W B - - B
+W W W B - - B
+W W W B B B B
+W W W B B B B
+W W W B B B B
+W W W B B B B
+
+Black
+1
+4
+
