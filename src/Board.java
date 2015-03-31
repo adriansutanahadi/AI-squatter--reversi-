@@ -17,8 +17,11 @@ public class Board {
 
 
 	private Integer dimension;
+	private Integer blackScore;
+	private Integer whiteScore;
 	private CellContent[][] grid = null;
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
+	private boolean finished = true;
 	
 	//Getter Setters
 	public Integer getDimension() {
@@ -27,6 +30,18 @@ public class Board {
 
 	public CellContent[][] getGrid() {
 		return grid;
+	}
+
+	public Integer getBlackScore() {
+		return blackScore;
+	}
+
+	public Integer getWhiteScore() {
+		return whiteScore;
+	}
+
+	public boolean isFinished() {
+		return finished;
 	}
 
 	public ArrayList<Point> getCapturedCellsMap() {
@@ -39,30 +54,34 @@ public class Board {
 	}
 
 	// insert cell content at the specific row
-	// ROW STAETS FROM 0
-	public CellContent[][] addContent(String input, Integer Row){
+	// row STAETS FROM 0
+	public CellContent[][] addContent(String input, Integer row) throws Exception{
 		String[] input_array = input.split(" ");
-		assert(input_array.length == dimension);
+		Integer lengthOfInput = input_array.length;
+		if (lengthOfInput != this.dimension){
+			throw new Exception(String.format("Expected %d number of columns at row %d.",this.dimension,row));
+		};
 		for (int i = 0; i< dimension; i ++){
-			try {
+			
 				// Add to grid
-				CellContent cellcontent = StringToCellContent(input_array[i]);
-				grid[Row][i] = cellcontent;
+				CellContent cellcontent = stringToCellContent(input_array[i]);
+				grid[row][i] = cellcontent;
 				
 				// Add position of captured cells to map
 				if (cellcontent == CellContent.CAPTURED) {
-					capturedCellsMap.add(new Point(Row,i));
+					capturedCellsMap.add(new Point(row,i));
 				}
 				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				// Check if there is a free cell
+				if (cellcontent == CellContent.FREE) {
+					finished = false;
+				}
+
 		}
 		return this.grid;
 	}
 	
-	private CellContent StringToCellContent(String s) throws Exception{
+	private CellContent stringToCellContent(String s) throws Exception{
 		switch (s) {
 			case "B": return CellContent.BLACK;
 			case "W": return CellContent.WHITE;
@@ -71,6 +90,104 @@ public class Board {
 			default: throw new Exception(String.format("String <%s> does not correspond to Cell Enum please check the input string !\n",s));
 		}
 	}
+	
+	private boolean checkCellValidity(Point p){
+		if ((p.x < this.dimension) && (p.x > 0)
+				&& (p.y < this.dimension) && (p.y > 0)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public CellContent checkCapturedCell(Point p) throws Exception{
+		Point check;
+		ArrayList<CellContent> surroundingCell = new ArrayList<CellContent>();
+		// check upwards
+		check = p;
+		check.y -= 1;
+		while (checkCellValidity(check)){
+			if (grid[check.x][check.y] == CellContent.CAPTURED){
+				check.y -= 1;
+				continue;
+			} else {
+				surroundingCell.add(grid[check.x][check.y]);
+			}
+		}
+		
+		// check downwards
+		check = p;
+		check.y += 1;
+		while (checkCellValidity(check)){
+			if (grid[check.x][check.y] == CellContent.CAPTURED){
+				check.y += 1;
+				continue;
+			} else {
+				surroundingCell.add(grid[check.x][check.y]);
+			}
+		}
+		
+		// check leftwards
+		check = p;
+		check.x -= 1;
+		while (checkCellValidity(check)){
+			if (grid[check.x][check.y] == CellContent.CAPTURED){
+				check.x -= 1;
+				continue;
+			} else {
+				surroundingCell.add(grid[check.x][check.y]);
+			}
+		}
+		
+		// check rightwards
+		check = p;
+		check.x += 1;
+		while (checkCellValidity(check)){
+			if (grid[check.x][check.y] == CellContent.CAPTURED){
+				check.x += 1;
+				continue;
+			} else {
+				surroundingCell.add(grid[check.x][check.y]);
+			}
+		}
+		
+		
+		// check 4 item in surrounding cell & 4 same items in the array
+		Integer black = 0;
+		Integer white = 0;
+		for(CellContent c : surroundingCell) {
+			if (c == CellContent.BLACK) {
+				black++;
+			} else if (c == CellContent.WHITE) {
+				white++;
+			}
+		}
+		
+		if (black == 4) {
+			return CellContent.BLACK;
+		} else if (white == 4){
+			return CellContent.WHITE;
+		} 
+			// Must be owned by someone, board has errors
+			else {
+			throw new Exception("Board Has error(s)");
+		}
+	}
+	
+	// return the scores
+	public void updateScore() throws Exception{
+		Integer blackScore = 0;
+		Integer whiteScore = 0;
+		for(Point p : capturedCellsMap) {
+			if (checkCapturedCell(p) == CellContent.BLACK) {
+				blackScore++;
+			} else {
+				whiteScore++;
+			}
+		}
+		this.blackScore = blackScore;
+		this.whiteScore = whiteScore;
+	}
+	
 }
 
 
