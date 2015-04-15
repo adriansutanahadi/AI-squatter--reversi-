@@ -1,10 +1,6 @@
 package asutanahadi.squatter;
-import java.awt.print.Printable;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
-
 
 public class Main {
 	
@@ -21,40 +17,57 @@ public class Main {
 		String result = null;
 		Integer dimension = 0;
 		Integer lineCount = 0;
-		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		Scanner sc = new Scanner(System.in);
-		// TODO Auto-generated method stub
 		
 	    try {
 	    	// read input
 	    	while(sc.hasNextLine()) {
+	    		// record input
 	    		input = sc.nextLine();
+	    		
+	    		// if there is no more input, break the loop
 	    		if (input.isEmpty()) {
 	    			break;
 	    		}
+	    		
+	    		// record dimension from the first line
 	    		if (firstRead) {
 	    			dimension = Integer.parseInt(input);
 	    			firstRead = false;
 	    			grid = new Board(dimension);
 	    		}
 	    		else {
+	    			
 	    			if (dimension == 0) {
+	    		    	// close the scanner
+	    		    	sc.close();
 	    				throw new Exception("Dimension cannot be 0.");
 	    			}
-	    			//Add input to block
+	    			
+	    			// Add input to block
 	    			if (lineCount <= dimension) {
 	    				grid.addContent(input, lineCount-1);
 	    			} else {
+	    		    	// close the scanner
+	    		    	sc.close();
 	    				throw new Exception("Too much rows from the input.");
 	    			}
 	    		}
 	    		lineCount++;
 	    	}
-	    	if (lineCount < dimension) {
+	    	
+	    	// close the scanner
+	    	sc.close();
+	    	
+	    	// check if the input is enough
+	    	if (lineCount <= dimension) {
 	    		throw new Exception("Not enough row input.");
 	    	}
+	    	
+	    	// update the score
         	grid.updateScore();
         	
+        	// check if the game has ended and who wins
         	if (!grid.isFinished()) {
         		result = "None";
         	}
@@ -65,6 +78,7 @@ public class Main {
         	} else {
         		result = "Draw";
         	}
+        	
 	    } catch (IOException ioe) {
 	    	System.out.println("IO error trying to read your name!");
 	        System.exit(1);

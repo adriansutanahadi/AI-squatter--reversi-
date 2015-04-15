@@ -1,0 +1,60 @@
+617462 asutanahadi Adrian Sutanahadi
+613726 dthamrin Denis Thamrin
+
+N = number of Board Piece
+M = number of Capture Piece
+D = Board Dimension (square root of N)
+
+###############################################################################
+# Pseudocode                                                                  #
+###############################################################################
+
+Initialize Map
+Initialize 2D-Array
+Initialize WhiteScore and BlackScore
+GameState = Ended
+
+For each element e of the Input            O(N)
+    push e to 2D-Array                     O(1)
+        if e is a captured Piece           O(1)
+            push e to Map                  O(1)
+        if e is a Free Piece               O(1)
+            Game = Not Ended               O(1)
+
+// Total so far O(N) for reading input into 2D-Array
+
+For each element c of the Map O(M) (iterating over captured pieces)
+    surrounding = check surrounding(c)     O(4D) / O(sqrt(N))
+    if surrounding == black
+        c is black
+    else
+        c is white
+
+// Total so far O(M*sqrt(N)) or O(M4D) -> O(MD)
+
+###############################################################################
+# Discussion                                                                  #
+###############################################################################
+
+By adding a map which is a list of the position of all the captured pieces,
+we can reduce the complexity from O(N^2) to O(MD). Because we do not need
+to find where the location of the captured piece iterating one by one.
+
+By using an array, we can check the surrounding node with constant time rather
+than using other data structure.
+
+Check surrounding works by checking in upwards, bottom, left, right directions,
+iterating over the position one by one. It stops when it sees a black/white
+node or when it is out of bound. We can determine a captured cell's ownership
+just by looking on the 4 direction and see which node Black/White is in there.
+It is because of the nature of the input that we can do this. We can also
+check in at least 1 direction only but for safety and extensionability, we
+check in 4 directions . This method only cost us O(4D) because we only need
+to iterate along the dimension.
+
+When checking surrounding, we will skip nodes that has been previously checked
+if and only if the skipped nodes is a captured cell, we have already
+determined who owns it and it is a direct neighbour of the checked node.
+This can reduce the number of nodes checked in substantial amount if input size
+is relatively large. However worst case is still performing the same but it can
+improve average case slightly.
