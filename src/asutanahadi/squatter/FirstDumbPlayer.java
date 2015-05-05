@@ -3,6 +3,8 @@ package asutanahadi.squatter;
 import java.io.PrintStream;
 import java.util.Random;
 
+import asutanahadi.squatter.Board.CellContent;
+
 public class FirstDumbPlayer implements Player, Piece {
 	Board b;
 	int playerSide;
@@ -42,20 +44,43 @@ public class FirstDumbPlayer implements Player, Piece {
 	}
 
 	@Override
+
+	/* Function called by referee to inform the player about the opponent's move
+	 *  Return -1 if the move is illegal otherwise return 0
+	 */
 	public int opponentMove(Move m) {
 		// TODO Auto-generated method stub
-		return 0;
+		int legal = -1;
+		
+		// Adding the piece
+		if (m.P ==  BLACK && this.playerSide == WHITE) {
+			legal = b.addPiece(m.Row, m.Col, CellContent.BLACK);
+		} else if (m.P == WHITE && this.playerSide == BLACK) {
+			legal = b.addPiece(m.Row, m.Col, CellContent.WHITE);
+		}
+		return legal;
 	}
 
 	@Override
 	public int getWinner() {
+		
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	//print borard not done
 	@Override
 	public void printBoard(PrintStream output) {
 		// TODO Auto-generated method stub
+		int d = b.getDimension();
+		for (int i = 0; i < d; i++) {
+			for (int j = 0; j < d; j++) {
+				CellContent c = b.getGrid()[i][j];
+				
+				//output.println(x)
+				
+			}
+		}
 		
 	}
 

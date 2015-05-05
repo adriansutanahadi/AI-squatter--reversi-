@@ -6,20 +6,24 @@ import java.util.ArrayList;
 public class Board {
 	
 	// Board Declaration
+	// Changed each captured to individual CAPTURED BLACK / WHITE
 	public enum CellContent {
 		BLACK,
 		WHITE,
-		CAPTURED,
+		CAPTURED_FREE,
+		CAPTURED_WHITE,
+		CAPTURED_BLACK,
 		FREE
 	}
 
 	private Integer dimension;
 	private Integer blackScore;
 	private Integer whiteScore;
+	private Integer freeCellCount;
 	private CellContent[][] grid = null;
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
-	private boolean finished = true;
+	//private boolean finished = false;
 	
 	// Getters Setters
 	public Integer getDimension() {
@@ -39,7 +43,7 @@ public class Board {
 	}
 
 	public boolean isFinished() {
-		return finished;
+		return (freeCellCount == 0);
 	}
 
 	public ArrayList<Point> getCapturedCellsMap() {
@@ -50,49 +54,69 @@ public class Board {
 	public Board(Integer dimension){
 		this.dimension = dimension;
 		grid = new CellContent[dimension][dimension];
-	}
-
-	// insert cell content at the specific row
-	// row starts from 0
-	public CellContent[][] addContent(String input, Integer y) throws Exception{
-		String[] input_array = input.split(" ");
-		Integer lengthOfInput = input_array.length;
-		
-		// check whether the input supplied enough rows
-		if (lengthOfInput != this.dimension){
-			throw new Exception(String.format("Expected %d number of columns at row %d.",this.dimension,y));
-		}
-		
-		// Populate the two-dimensional array
-		for (int x = 0; x < dimension; x++){
-			
-				// Add to grid
-				CellContent cellcontent = stringToCellContent(input_array[x]);
-				grid[x][y] = cellcontent;
+		for (int i = 0; i < this.dimension; i++) {
+			for (int j = 0; j < this.dimension; j++) {
+				grid[i][j] = CellContent.FREE;
 				
-				// Add position of captured cells to map
-				if (cellcontent == CellContent.CAPTURED) {
-					capturedCellsMap.add(new Point(x,y));
-				}
-				
-				// Check if there is a free cell
-				if (cellcontent == CellContent.FREE) {
-					finished = false;
-				}
+			}
 		}
-		return this.grid;
+		this.freeCellCount = dimension*dimension;
 	}
 	
-	// Convert input string to CellContent Enum
-	private CellContent stringToCellContent(String s) throws Exception{
-		switch (s) {
-			case "B": return CellContent.BLACK;
-			case "W": return CellContent.WHITE;
-			case "-": return CellContent.CAPTURED;
-			case "+": return CellContent.FREE;
-			default: throw new Exception(String.format("String <%s> does not correspond to Cell Enum please check the input string !\n",s));
+	// Add a single piece to the specified location, return True if succeed 
+	public int addPiece(int row,int col,CellContent player){
+		if (grid[row][col] == CellContent.FREE){
+			grid[row][col] = player;
+			freeCellCount--;
+			return 0;
+		}else {
+			return -1;
 		}
+		
 	}
+	
+	
+	// insert cell content at the specific row
+	// row starts from 0
+//	public CellContent[][] addContent(String input, Integer y) throws Exception{
+//		String[] input_array = input.split(" ");
+//		Integer lengthOfInput = input_array.length;
+//		
+//		// check whether the input supplied enough rows
+//		if (lengthOfInput != this.dimension){
+//			throw new Exception(String.format("Expected %d number of columns at row %d.",this.dimension,y));
+//		}
+//		
+//		// Populate the two-dimensional array
+//		for (int x = 0; x < dimension; x++){
+//			
+//				// Add to grid
+//				CellContent cellcontent = stringToCellContent(input_array[x]);
+//				grid[x][y] = cellcontent;
+//				
+//				// Add position of captured cells to map
+//				if (cellcontent == CellContent.CAPTURED) {
+//					capturedCellsMap.add(new Point(x,y));
+//				}
+//				
+//				// Check if there is a free cell
+//				if (cellcontent == CellContent.FREE) {
+//					finished = false;
+//				}
+//		}
+//		return this.grid;
+//	}
+	
+	// Convert input string to CellContent Enum
+////	private CellContent stringToCellContent(String s) throws Exception{
+//		switch (s) {
+//			case "B": return CellContent.BLACK;
+//			case "W": return CellContent.WHITE;
+//			case "-": return CellContent.CAPTURED;
+//			case "+": return CellContent.FREE;
+//			default: throw new Exception(String.format("String <%s> does not correspond to Cell Enum please check the input string !\n",s));
+//		}
+//	}
 	
 	// Check whether the index is out of bound
 	private boolean checkCellValidity(Point p){
@@ -112,7 +136,7 @@ public class Board {
 		check = new Point(p);
 		check.y -= 1;
 		while (checkCellValidity(check)){
-			if (grid[check.x][check.y] == CellContent.CAPTURED){
+			if (isCaptured(grid[check.x][check.y])){
 				return capturedCellsOwner.get(capturedCellsMap.indexOf(check));
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
@@ -124,7 +148,7 @@ public class Board {
 		check = new Point(p);
 		check.x -= 1;
 		while (checkCellValidity(check)){
-			if (grid[check.x][check.y] == CellContent.CAPTURED){
+			if (isCaptured(grid[check.x][check.y])){
 				return capturedCellsOwner.get(capturedCellsMap.indexOf(check));
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
@@ -136,7 +160,7 @@ public class Board {
 		check = new Point(p);
 		check.y += 1;
 		while (checkCellValidity(check)){
-			if (grid[check.x][check.y] == CellContent.CAPTURED){
+			if (isCaptured(grid[check.x][check.y])){
 				check.y += 1;
 				continue;
 			} else {
@@ -149,7 +173,7 @@ public class Board {
 		check = new Point(p);
 		check.x += 1;
 		while (checkCellValidity(check)){
-			if (grid[check.x][check.y] == CellContent.CAPTURED){
+			if (isCaptured(grid[check.x][check.y])){
 				check.x += 1;
 				continue;
 			} else {
@@ -182,6 +206,14 @@ public class Board {
 		}
 	}
 	
+	private Boolean isCaptured(CellContent c){
+		if (c == CellContent.CAPTURED_BLACK || c == CellContent.CAPTURED_FREE || c == CellContent.CAPTURED_WHITE){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	// update the scores
 	public void updateScore() throws Exception{
 		Integer blackScore = 0;
