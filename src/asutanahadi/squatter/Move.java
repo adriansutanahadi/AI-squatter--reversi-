@@ -1,4 +1,4 @@
-package aiproj.squatter;
+package asutanahadi.squatter;
 /*
  *   Move:
  *      Define possible Squatter move

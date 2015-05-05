@@ -1,4 +1,4 @@
-package aiproj.squatter;
+package asutanahadi.squatter;
 
 import java.io.PrintStream;
 

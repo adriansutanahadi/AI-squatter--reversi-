@@ -1,4 +1,4 @@
-package aiproj.squatter;
+package asutanahadi.squatter;
 /*
  *   Piece:
  *      Define types of states that can appear on a board
