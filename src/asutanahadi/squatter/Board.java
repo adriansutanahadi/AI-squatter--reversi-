@@ -91,20 +91,25 @@ public class Board {
 			Point bottomLeft = new Point(checkArea.x + checkArea.width, checkArea.y + checkArea.height);
 			for (int i = topLeft.x; i <= bottomLeft.x; i++) {
 				for (int j = topLeft.y; j <= bottomLeft.y; j++) {
+					Point piecePosition = new Point(i, j);
 					CellContent piece = grid[i][j];
 					if (player == CellContent.WHITE) {
-						switch (piece) {
-						case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
-						case BLACK: grid[i][j] = CellContent.CAPTURED_BLACK;
-						case CAPTURED_WHITE: grid[i][j] = CellContent.WHITE;
-						default:  grid[i][j] = CellContent.CAPTURED_FREE;
+						if (loopPolygon.contains(piecePosition)) {
+							switch (piece) {
+							case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
+							case BLACK: grid[i][j] = CellContent.CAPTURED_BLACK;
+							case CAPTURED_WHITE: grid[i][j] = CellContent.WHITE;
+							default:  grid[i][j] = CellContent.CAPTURED_FREE;
+							}
 						}
 					} else if (player == CellContent.BLACK) {
-						switch (piece) {
-						case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
-						case WHITE: grid[i][j] = CellContent.CAPTURED_WHITE;
-						case CAPTURED_BLACK: grid[i][j] = CellContent.BLACK;
-						default:  grid[i][j] = CellContent.CAPTURED_FREE;
+						if (loopPolygon.contains(piecePosition)) {
+							switch (piece) {
+							case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
+							case WHITE: grid[i][j] = CellContent.CAPTURED_WHITE;
+							case CAPTURED_BLACK: grid[i][j] = CellContent.BLACK;
+							default:  grid[i][j] = CellContent.CAPTURED_FREE;
+							}
 						}
 					}
 					
@@ -148,6 +153,9 @@ public class Board {
 					// check for same piece type in 8 directions
 					for (Point dir : directions) {
 						Point nextPosition = new Point(currentPosition.x + dir.x, currentPosition.y + dir.y);
+						if (!checkCellValidity(nextPosition)) {
+							continue;
+						}
 						if (!prevPosition.equals(nextPosition) && grid[nextPosition.x][nextPosition.y] == player) {
 							nextPositionAvailable.add(nextPosition);
 						}
