@@ -39,6 +39,7 @@ public class BoardTest {
 	public void add_loop_square(){
 		board = new Board(7);
 		try {			
+			board.addPiece(1, 1, CellContent.BLACK);
 			board.addPiece(0, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
 			board.addPiece(0, 2, CellContent.WHITE);
@@ -47,7 +48,6 @@ public class BoardTest {
 			board.addPiece(2, 1, CellContent.WHITE);
 			board.addPiece(2, 0, CellContent.WHITE);
 			board.addPiece(1, 0, CellContent.WHITE);
-			board.addPiece(1, 1, CellContent.BLACK);
 
 			board.updateScore();
 			assertEquals((Integer) 1,(Integer) board.getWhiteScore() );
@@ -62,14 +62,15 @@ public class BoardTest {
 	//  - w -
 	//  w b w
 	//  - w -
+	@Test
 	public void add_loop_diamond(){
 		board = new Board(7);
 		try {
-			board.addPiece(2, 0, CellContent.WHITE);
+			board.addPiece(1, 1, CellContent.BLACK);
+			board.addPiece(1, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
 			board.addPiece(1, 2, CellContent.WHITE);
 			board.addPiece(2, 1, CellContent.WHITE);
-			board.addPiece(1, 1, CellContent.BLACK);
 
 			board.updateScore();
 			assertEquals((Integer) 1,(Integer) board.getWhiteScore() );
@@ -83,6 +84,7 @@ public class BoardTest {
 	//  - w - w -
 	//  w b w b w
 	//  - w w w w
+	@Test
 	public void add_loop_doubly(){
 		board = new Board(7);
 		try {
@@ -120,6 +122,7 @@ public class BoardTest {
 	//  - w - - w -
 	//  - w - - w - 
 	//  - w w w w -
+	@Test
 	public void add_big_loop(){
 		add_loop_diamond();
 		// left side
