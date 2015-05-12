@@ -67,11 +67,12 @@ public class Board {
 	}
 	
 	// Add a single piece to the specified location, return True if succeed 
-	public int addPiece(int row, int col, CellContent player) {
+	public int addPiece(int row, int col, CellContent player) throws Exception {
 		if (grid[row][col] == CellContent.FREE){
 			grid[row][col] = player;
 			freeCellCount--;
 			updateBoard(row, col, player);
+			updateScore();
 			return 0;
 		}else {
 			return -1;
@@ -96,19 +97,35 @@ public class Board {
 					if (player == CellContent.WHITE) {
 						if (loopPolygon.contains(piecePosition)) {
 							switch (piece) {
-							case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
-							case BLACK: grid[i][j] = CellContent.CAPTURED_BLACK;
-							case CAPTURED_WHITE: grid[i][j] = CellContent.WHITE;
-							default:  grid[i][j] = CellContent.CAPTURED_FREE;
+							case FREE:
+								grid[i][j] = CellContent.CAPTURED_FREE;
+								capturedCellsMap.add(new Point(i, j));
+							case BLACK:
+								grid[i][j] = CellContent.CAPTURED_BLACK;
+								capturedCellsMap.add(new Point(i, j));
+							case CAPTURED_WHITE:
+								grid[i][j] = CellContent.WHITE;
+								capturedCellsMap.remove(new Point(i, j));
+							default:
+								grid[i][j] = CellContent.CAPTURED_FREE;
+								capturedCellsMap.add(new Point(i, j));
 							}
 						}
 					} else if (player == CellContent.BLACK) {
 						if (loopPolygon.contains(piecePosition)) {
 							switch (piece) {
-							case FREE: grid[i][j] = CellContent.CAPTURED_FREE;
-							case WHITE: grid[i][j] = CellContent.CAPTURED_WHITE;
-							case CAPTURED_BLACK: grid[i][j] = CellContent.BLACK;
-							default:  grid[i][j] = CellContent.CAPTURED_FREE;
+							case FREE:
+								grid[i][j] = CellContent.CAPTURED_FREE;
+								capturedCellsMap.add(new Point(i, j));
+							case WHITE:
+								grid[i][j] = CellContent.CAPTURED_WHITE;
+								capturedCellsMap.add(new Point(i, j));
+							case CAPTURED_BLACK:
+								grid[i][j] = CellContent.BLACK;
+								capturedCellsMap.remove(new Point(i, j));
+							default:
+								grid[i][j] = CellContent.CAPTURED_FREE;
+								capturedCellsMap.add(new Point(i, j));
 							}
 						}
 					}
