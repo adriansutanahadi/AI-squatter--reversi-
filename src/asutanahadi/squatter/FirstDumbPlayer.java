@@ -68,18 +68,26 @@ public class FirstDumbPlayer implements Player, Piece {
 		return 0;
 	}
 
-	//print borard not done
 	@Override
 	public void printBoard(PrintStream output) {
-		// TODO Auto-generated method stub
 		int d = b.getDimension();
+		String s;
 		for (int i = 0; i < d; i++) {
 			for (int j = 0; j < d; j++) {
 				CellContent c = b.getGrid()[i][j];
-				
-				//output.println(x)
-				
+				switch (c) {
+					case BLACK: s = "B";
+					case WHITE: s = "W" ;
+					case CAPTURED_FREE: s = "-" ;
+					case CAPTURED_WHITE: s = "w" ;
+					case CAPTURED_BLACK: s = "b" ;
+					case FREE: s = "+" ;
+					default: s = "";
+				}
+				output.print(s);
+				if (j != d-1) output.print(" ");
 			}
+			output.print("\n");
 		}
 		
 	}
