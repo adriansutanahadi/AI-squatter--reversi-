@@ -216,6 +216,24 @@ public class Board {
 		}
 		return loops;
 	}
+	/*
+	 * Generate all possible moves in current board
+	 * Not tested yet
+	 * TODO : pruning to be implemented
+	 */
+	public ArrayList<Point> getMove(){
+		ArrayList<Point> moves = new ArrayList<Point>();
+		for (int i = 0; i < this.dimension; i++) {
+			for (int j = 0; j < this.dimension; j++) {
+				if (grid[i][j] == CellContent.FREE){
+					moves.add(new Point(i,j));
+				}
+				
+			}
+		}		
+		return moves;
+	}
+	
 	
 	// insert cell content at the specific row
 	// row starts from 0

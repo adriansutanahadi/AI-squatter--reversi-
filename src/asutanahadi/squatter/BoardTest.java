@@ -11,9 +11,7 @@ import asutanahadi.squatter.Board.CellContent;
 public class BoardTest {
 	private Board board;
 	@Test
-	//public void test() {
-	//	fail("Not yet implemented");
-	//}
+
 	
 	// Simple init test
 	public void init(){
