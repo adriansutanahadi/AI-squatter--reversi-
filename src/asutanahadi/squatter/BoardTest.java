@@ -1,6 +1,9 @@
 package asutanahadi.squatter;
 import static org.junit.Assert.*;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import asutanahadi.squatter.Board.CellContent;
@@ -220,6 +223,22 @@ public class BoardTest {
 
 		assertEquals((int) 1,(int) board.getWhiteScore() );
 		assertEquals((int) 8,(int) board.getBlackScore() );
+	}
+	
+	// testing if making possible moves work
+	// TODO more extreme cases please
+	@Test
+	public void test_possible_moves(){
+		Board board = new Board(7);
+		ArrayList<Point> moves = board.getMove();
+		assertEquals((int) 7*7,(int) moves.size() );
+		try {
+			board.addPiece(2, 3, CellContent.BLACK);
+		} catch (Exception e){
+			
+		}
+		moves = board.getMove();
+		assertEquals((int) 7*7 - 1,(int) moves.size() );
 	}
 	 
 	
