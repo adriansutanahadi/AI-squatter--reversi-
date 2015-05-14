@@ -43,7 +43,6 @@ public class Referee implements Piece{
 		{
 			
 			NumberofMoves++;
-			System.out.println(NumberofMoves);
 			lastPlayedMove=P1.makeMove();
 			System.out.println("Placing to. "+lastPlayedMove.Row+":"+lastPlayedMove.Col+" by "+lastPlayedMove.P);		
 			P1.printBoard(System.out);
