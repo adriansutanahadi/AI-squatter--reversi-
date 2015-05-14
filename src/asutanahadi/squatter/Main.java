@@ -46,7 +46,7 @@ public class Main {
 	    			
 	    			// Add input to block
 	    			if (lineCount <= dimension) {
-	    				grid.addContent(input, lineCount-1);
+	    				//grid.addContent(input, lineCount-1);
 	    			} else {
 	    		    	// close the scanner
 	    		    	sc.close();

@@ -82,18 +82,28 @@ public class Board {
 	
 	private void updateBoard(int row, int col, CellContent player) {
 		ArrayList<ArrayList<Point>> loops = findLoop(row, col, player);
+		
+		// for each loop, check if there are new captured pieces
 		for (ArrayList<Point> loop : loops) {
+			
+			// convert the loop into a Polygon object
 			Polygon loopPolygon = new Polygon();
 			for (Point p : loop) {
 				loopPolygon.addPoint(p.x, p.y);
 			}
+			
+			// limit the area of the search
 			Rectangle checkArea = loopPolygon.getBounds();
 			Point topLeft = new Point(checkArea.x, checkArea.y);
 			Point bottomLeft = new Point(checkArea.x + checkArea.width, checkArea.y + checkArea.height);
+			
+			// search the area for new captured pieces
 			for (int i = topLeft.x; i <= bottomLeft.x; i++) {
 				for (int j = topLeft.y; j <= bottomLeft.y; j++) {
 					Point piecePosition = new Point(i, j);
 					CellContent piece = grid[i][j];
+					
+					// convert the piece to the captured ones if it is inside the polygon(loop)
 					if (player == CellContent.WHITE) {
 						if (loopPolygon.contains(piecePosition)) {
 							switch (piece) {
@@ -129,13 +139,14 @@ public class Board {
 							}
 						}
 					}
-					
 				}
 			}
 		}
 	}
 	
 	private ArrayList<ArrayList<Point>> findLoop(int row, int col, CellContent player) {
+		
+		// define the 8 directions
 		Point nw = new Point(-1, -1);
 		Point n = new Point(0, -1);
 		Point ne = new Point(1, -1);
@@ -148,26 +159,32 @@ public class Board {
 		
 		Point firstPiece = new Point(row,col);
 		
-		ArrayList<ArrayList<Point>> loops = new ArrayList<ArrayList<Point>>();
-		ArrayList<Point> discovered = new ArrayList<Point>();
+		ArrayList<ArrayList<Point>> loops = new ArrayList<ArrayList<Point>>(); // to store loops
+		ArrayList<Point> discovered = new ArrayList<Point>(); // to store discovered item in the graph
 		
+		// to store the state when there is an intersection
 		ArrayList<Point> positionList = new ArrayList<Point>();
 		ArrayList<ArrayList<Point>> pathList = new ArrayList<ArrayList<Point>>();
 		
+		// initialise first move (which is the first piece)
 		positionList.add(firstPiece);
 		pathList.add(new ArrayList<Point>());
+		
 		for (int i = 0; i < positionList.size(); i++) {
 			Stack<Point> queue = new Stack<Point>();
 			queue.push(positionList.get(i));
 			Point prevPosition = positionList.get(i);
+			
+			// use depth-first search to check for a loop
 			while (!queue.empty()) {
 				Point currentPosition = queue.pop();
 				if (!discovered.contains(currentPosition)) {
+					// visit the piece
 					discovered.add(currentPosition);
 					pathList.get(i).add(currentPosition);
-					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
 					
-					// check for same piece type in 8 directions
+					// check for available pieces to go to in 8 directions
+					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
 					for (Point dir : directions) {
 						Point nextPosition = new Point(currentPosition.x + dir.x, currentPosition.y + dir.y);
 						if (!checkCellValidity(nextPosition)) {
@@ -178,17 +195,18 @@ public class Board {
 						}
 					}
 					
-					// process first available piece
+					// mark next piece to be traversed
 					if (nextPositionAvailable.size() > 0) {
-						if (!discovered.contains(nextPositionAvailable.get(0))) {
+						if (nextPositionAvailable.get(0).equals(firstPiece)) {
+							// store the path if it creates a loop
+							loops.add(new ArrayList<Point>(pathList.get(i)));
+						} else if (!discovered.contains(nextPositionAvailable.get(0))) {
 							queue.push(nextPositionAvailable.get(0));
 							prevPosition = currentPosition;
-						} else if (nextPositionAvailable.get(0) == firstPiece) {
-							loops.add(new ArrayList<Point>(pathList.get(i)));
-						}
+						} 
 					}
 					
-					// put the rest in the queue
+					// store the other pieces, so that it can be continued when this one has finished traversing
 					for (int j = 1; j < nextPositionAvailable.size(); j++) {
 						positionList.add(nextPositionAvailable.get(j));
 						pathList.add(new ArrayList<Point>(pathList.get(i)));
@@ -198,6 +216,25 @@ public class Board {
 		}
 		return loops;
 	}
+	/*
+	 * Generate all possible moves in current board
+	 * Not tested yet
+	 * TODO : pruning to be implemented
+	 */
+	public ArrayList<Point> getMove(){
+		ArrayList<Point> moves = new ArrayList<Point>();
+		for (int i = 0; i < this.dimension; i++) {
+			for (int j = 0; j < this.dimension; j++) {
+				if (grid[i][j] == CellContent.FREE){
+					moves.add(new Point(i,j));
+				}
+				
+			}
+		}		
+		return moves;
+	}
+	
+	
 	// insert cell content at the specific row
 	// row starts from 0
 //	public CellContent[][] addContent(String input, Integer y) throws Exception{
