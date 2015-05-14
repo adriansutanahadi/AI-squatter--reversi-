@@ -63,7 +63,7 @@
 
 	<!-- Run the JUnit Tests -->
 	<!-- Output is XML, could also be plain-->
-	<target name="ant">
+	<target name="test">
 		<junit printsummary="on" fork="true" haltonfailure="yes">
 			<classpath refid="junit.class.path" />
 			<classpath>
