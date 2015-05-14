@@ -93,20 +93,20 @@ public class BoardTest {
 	public void add_loop_doubly(){
 		Board board = new Board(7);
 		try {
-			board.addPiece(2, 0, CellContent.WHITE);
+			board.addPiece(1, 1, CellContent.BLACK);
+			board.addPiece(1, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
 			board.addPiece(1, 2, CellContent.WHITE);
 			board.addPiece(2, 1, CellContent.WHITE);
 			
-			board.addPiece(1, 1, CellContent.BLACK);
-			
+
+			board.addPiece(3, 1, CellContent.BLACK);
 			board.addPiece(2, 2, CellContent.WHITE);
 			board.addPiece(3, 0, CellContent.WHITE);
 			board.addPiece(3, 2, CellContent.WHITE);
 			board.addPiece(4, 1, CellContent.WHITE);
 			board.addPiece(4, 2, CellContent.WHITE);		
 			
-			board.addPiece(3, 1, CellContent.BLACK);
 			
 			
 		
@@ -147,21 +147,22 @@ public class BoardTest {
 			board.addPiece(1, 3, CellContent.WHITE);
 			board.addPiece(1, 4, CellContent.WHITE);
 			board.addPiece(1, 5, CellContent.WHITE);
+			board.addPiece(1, 6, CellContent.WHITE);
 	
 			
 			// bottom side
-			board.addPiece(2, 5, CellContent.WHITE);
-			board.addPiece(3, 5, CellContent.WHITE);
-			board.addPiece(4, 5, CellContent.WHITE);
+			board.addPiece(2, 6, CellContent.WHITE);
+			board.addPiece(3, 6, CellContent.WHITE);
+			board.addPiece(4, 6, CellContent.WHITE);
 			 
 			// right side
+			board.addPiece(4, 5, CellContent.WHITE);
 			board.addPiece(4, 4, CellContent.WHITE);
 			board.addPiece(4, 3, CellContent.WHITE);
-			board.addPiece(4, 2, CellContent.WHITE);
 			
 			// top side
-			board.addPiece(3, 2, CellContent.WHITE);
-			board.addPiece(2, 2, CellContent.WHITE);
+			board.addPiece(3, 3, CellContent.WHITE);
+			board.addPiece(2, 3, CellContent.WHITE);
 			
 
 			board.updateScore();
@@ -221,7 +222,7 @@ public class BoardTest {
 			
 		}
 
-		assertEquals((int) 1,(int) board.getWhiteScore() );
+		assertEquals((int) 0,(int) board.getWhiteScore() );
 		assertEquals((int) 8,(int) board.getBlackScore() );
 	}
 	

@@ -110,15 +110,16 @@ public class Board {
 							case FREE:
 								grid[i][j] = CellContent.CAPTURED_FREE;
 								capturedCellsMap.add(new Point(i, j));
+								break;
 							case BLACK:
 								grid[i][j] = CellContent.CAPTURED_BLACK;
 								capturedCellsMap.add(new Point(i, j));
+								break;
 							case CAPTURED_WHITE:
 								grid[i][j] = CellContent.WHITE;
 								capturedCellsMap.remove(new Point(i, j));
+								break;
 							default:
-								grid[i][j] = CellContent.CAPTURED_FREE;
-								capturedCellsMap.add(new Point(i, j));
 							}
 						}
 					} else if (player == CellContent.BLACK) {
@@ -127,15 +128,16 @@ public class Board {
 							case FREE:
 								grid[i][j] = CellContent.CAPTURED_FREE;
 								capturedCellsMap.add(new Point(i, j));
+								break;
 							case WHITE:
 								grid[i][j] = CellContent.CAPTURED_WHITE;
 								capturedCellsMap.add(new Point(i, j));
+								break;
 							case CAPTURED_BLACK:
 								grid[i][j] = CellContent.BLACK;
 								capturedCellsMap.remove(new Point(i, j));
+								break;
 							default:
-								grid[i][j] = CellContent.CAPTURED_FREE;
-								capturedCellsMap.add(new Point(i, j));
 							}
 						}
 					}
@@ -155,7 +157,7 @@ public class Board {
 		Point s = new Point(0, 1);
 		Point sw = new Point(-1, 1);
 		Point w = new Point(-1, 0);
-		Point[] directions = new Point[] {nw, n, ne, e, se, s, sw, w};
+		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
 		
 		Point firstPiece = new Point(row,col);
 		
@@ -164,16 +166,18 @@ public class Board {
 		
 		// to store the state when there is an intersection
 		ArrayList<Point> positionList = new ArrayList<Point>();
+		ArrayList<Point> prevPositionList = new ArrayList<Point>();
 		ArrayList<ArrayList<Point>> pathList = new ArrayList<ArrayList<Point>>();
 		
 		// initialise first move (which is the first piece)
-		positionList.add(firstPiece);
+		positionList.add(new Point(firstPiece));
+		prevPositionList.add(new Point(firstPiece));
 		pathList.add(new ArrayList<Point>());
 		
 		for (int i = 0; i < positionList.size(); i++) {
 			Stack<Point> queue = new Stack<Point>();
 			queue.push(positionList.get(i));
-			Point prevPosition = positionList.get(i);
+			Point prevPosition = prevPositionList.get(i);
 			
 			// use depth-first search to check for a loop
 			while (!queue.empty()) {
@@ -181,7 +185,7 @@ public class Board {
 				if (!discovered.contains(currentPosition)) {
 					// visit the piece
 					discovered.add(currentPosition);
-					pathList.get(i).add(currentPosition);
+					pathList.get(i).add(new Point(currentPosition));
 					
 					// check for available pieces to go to in 8 directions
 					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
@@ -191,25 +195,26 @@ public class Board {
 							continue;
 						}
 						if (!prevPosition.equals(nextPosition) && grid[nextPosition.x][nextPosition.y] == player) {
-							nextPositionAvailable.add(nextPosition);
+							nextPositionAvailable.add(new Point(nextPosition));
 						}
 					}
 					
-					// mark next piece to be traversed
-					if (nextPositionAvailable.size() > 0) {
-						if (nextPositionAvailable.get(0).equals(firstPiece)) {
+					for (int j = 0; j < nextPositionAvailable.size(); j++) {
+						if (nextPositionAvailable.get(j).equals(firstPiece)) {
 							// store the path if it creates a loop
 							loops.add(new ArrayList<Point>(pathList.get(i)));
-						} else if (!discovered.contains(nextPositionAvailable.get(0))) {
-							queue.push(nextPositionAvailable.get(0));
-							prevPosition = currentPosition;
+						} else if (!pathList.get(i).contains(nextPositionAvailable.get(j))) {
+							if (j == 0) {
+								// mark next piece to be traversed
+								queue.push(nextPositionAvailable.get(0));
+								prevPosition = currentPosition;
+							} else {
+								// store the other pieces, so that it can be continued when this one has finished traversing
+								positionList.add(new Point(nextPositionAvailable.get(j)));
+								prevPositionList.add(new Point(currentPosition));
+								pathList.add(new ArrayList<Point>(pathList.get(i)));
+							}
 						} 
-					}
-					
-					// store the other pieces, so that it can be continued when this one has finished traversing
-					for (int j = 1; j < nextPositionAvailable.size(); j++) {
-						positionList.add(nextPositionAvailable.get(j));
-						pathList.add(new ArrayList<Point>(pathList.get(i)));
 					}
 				}
 			}
