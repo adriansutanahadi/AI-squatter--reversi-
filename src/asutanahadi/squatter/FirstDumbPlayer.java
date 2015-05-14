@@ -1,6 +1,8 @@
 package asutanahadi.squatter;
 
+import java.awt.Point;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 import asutanahadi.squatter.Board.CellContent;
@@ -32,6 +34,37 @@ public class FirstDumbPlayer implements Player, Piece {
 	 */
 	public Move makeMove() {
 		Move m = new Move();
+
+		ArrayList<Point> moves = b.getMove();
+
+
+		m.P = this.playerSide;
+
+		m.Col = moves.get(0).x;
+
+		m.Row = moves.get(0).y;
+		try{
+		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
+		}
+		catch (Exception e){
+			System.out.println(e);
+		}
+
+		// check if there is a piece on that position.
+
+		return m;
+	}
+	// convert an enum from player class to reflect on board class
+	private CellContent playerSidetoBoardSide(){
+		if (this.playerSide == WHITE){
+			return CellContent.WHITE;
+		} else{
+			return CellContent.BLACK;
+		}
+	}
+	
+	private Move randomMove(){
+		Move m = new Move();
 		Random rand = new Random();
 		int dimension = b.getDimension();
 		
@@ -53,10 +86,14 @@ public class FirstDumbPlayer implements Player, Piece {
 		int legal = -1;
 		
 		// Adding the piece
-		if (m.P ==  BLACK && this.playerSide == WHITE) {
-			legal = b.addPiece(m.Row, m.Col, CellContent.BLACK);
-		} else if (m.P == WHITE && this.playerSide == BLACK) {
-			legal = b.addPiece(m.Row, m.Col, CellContent.WHITE);
+		try {
+			if (m.P ==  BLACK && this.playerSide == WHITE) {
+				legal = b.addPiece(m.Col, m.Row, CellContent.BLACK);
+			} else if (m.P == WHITE && this.playerSide == BLACK) {
+				legal = b.addPiece(m.Col, m.Row, CellContent.WHITE);
+			}
+		} catch (Exception e){
+			System.out.println(e);
 		}
 		return legal;
 	}
