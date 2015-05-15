@@ -73,9 +73,9 @@ public class Board {
 			freeCellCount--;
 			updateBoard(x, y, player);
 			updateScore();
-			return 0;
+			return true;
 		}else {
-			return -1;
+			return false;
 		}
 		
 	}
