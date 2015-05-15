@@ -37,8 +37,6 @@ public class FirstDumbPlayer implements Player, Piece {
 		Move m = new Move();
 
 		ArrayList<Point> moves = b.getMove();
-
-
 		m.P = this.playerSide;
 		
 		m.Col = moves.get(0).x;
@@ -50,9 +48,7 @@ public class FirstDumbPlayer implements Player, Piece {
 		catch (Exception e){
 			System.out.println(e);
 		}
-
 		// check if there is a piece on that position.
-
 		return m;
 	}
 	// convert an enum from player class to reflect on board class
