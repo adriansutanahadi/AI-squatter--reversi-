@@ -1,4 +1,5 @@
 package asutanahadi.squatter;
+
 import static org.junit.Assert.*;
 
 import java.awt.Point;
@@ -6,10 +7,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import asutanahadi.squatter.Board.CellContent;
-
-
-
+import asutanahadi.squatter.Board.*;
 
 public class BoardTest {
 	@Test
