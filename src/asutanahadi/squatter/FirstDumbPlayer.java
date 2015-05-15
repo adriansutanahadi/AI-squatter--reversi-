@@ -40,7 +40,7 @@ public class FirstDumbPlayer implements Player, Piece {
 
 
 		m.P = this.playerSide;
-
+		
 		m.Col = moves.get(0).x;
 
 		m.Row = moves.get(0).y;
@@ -89,14 +89,20 @@ public class FirstDumbPlayer implements Player, Piece {
 		// Adding the piece
 		try {
 			if (m.P ==  BLACK && this.playerSide == WHITE) {
-				legal = b.addPiece(m.Col, m.Row, CellContent.BLACK);
+				if (b.addPiece(m.Col, m.Row, CellContent.BLACK)){
+					legal = 0;
+				}
 			} else if (m.P == WHITE && this.playerSide == BLACK) {
-				legal = b.addPiece(m.Col, m.Row, CellContent.WHITE);
+				if (b.addPiece(m.Col, m.Row, CellContent.WHITE)){
+					legal = 0
+				}
 			}
 		} catch (Exception e){
 			System.out.println(e);
 		}
-		illegalMoveMade = true;
+		if (legal == -1){
+			illegalMoveMade = true;
+		}
 		return legal;
 	}
 
