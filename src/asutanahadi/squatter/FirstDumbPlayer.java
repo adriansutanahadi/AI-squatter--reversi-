@@ -8,9 +8,9 @@ import java.util.Random;
 import asutanahadi.squatter.Board.CellContent;
 
 public class FirstDumbPlayer implements Player, Piece {
-	Board b;
-	Boolean illegalMoveMade = false;
-	int playerSide;
+	protected Board b;
+	private Boolean illegalMoveMade = false;
+	protected int playerSide;
 	
 	/* This funstion is called by the referee to initialise the player.
 	 *  Return 0 for successful initialization and -1 for failed one.
@@ -52,7 +52,7 @@ public class FirstDumbPlayer implements Player, Piece {
 		return m;
 	}
 	// convert an enum from player class to reflect on board class
-	private CellContent playerSidetoBoardSide(){
+	protected CellContent playerSidetoBoardSide(){
 		if (this.playerSide == WHITE){
 			return CellContent.WHITE;
 		} else{
@@ -60,7 +60,7 @@ public class FirstDumbPlayer implements Player, Piece {
 		}
 	}
 	
-	private Move randomMove(){
+	protected Move randomMove(){
 		Move m = new Move();
 		Random rand = new Random();
 		int dimension = b.getDimension();

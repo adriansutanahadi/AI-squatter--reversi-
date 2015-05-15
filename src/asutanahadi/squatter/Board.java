@@ -67,12 +67,17 @@ public class Board {
 	}
 	
 	// Add a single piece to the specified location, return True if succeed 
-	public Boolean addPiece(int x, int y, CellContent player) throws Exception {
+	public Boolean addPiece(int x, int y, CellContent player) {
 		if (grid[x][y] == CellContent.FREE){
 			grid[x][y] = player;
 			freeCellCount--;
 			updateBoard(x, y, player);
-			updateScore();
+			try {
+				updateScore();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return true;
 		}else {
 			return false;

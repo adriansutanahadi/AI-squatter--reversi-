@@ -17,13 +17,10 @@ public class BoardTest {
 	public void init(){
 		Board board = new Board(7);
 		assertEquals((int)7, (int)board.getDimension());
-		try {
 
-			board.addPiece(0, 0, CellContent.WHITE);
+		board.addPiece(0, 0, CellContent.WHITE);
 
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+
 		assertEquals(CellContent.WHITE, board.getGrid()[0][0]);
 		assertEquals(CellContent.FREE, board.getGrid()[6][6]);
 		assertEquals(false, board.isFinished());
@@ -38,7 +35,7 @@ public class BoardTest {
 	@Test
 	public void add_loop_square(){
 		Board board = new Board(7);
-		try {			
+		
 			board.addPiece(1, 1, CellContent.BLACK);
 			board.addPiece(0, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
@@ -49,11 +46,8 @@ public class BoardTest {
 			board.addPiece(2, 0, CellContent.WHITE);
 			board.addPiece(1, 0, CellContent.WHITE);
 
-			board.updateScore();
 
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+
 		
 		assertEquals((int) 1,(int) board.getWhiteScore() );
 		assertEquals((int) 0,(int) board.getBlackScore() );
@@ -67,18 +61,13 @@ public class BoardTest {
 	@Test
 	public void add_loop_diamond(){
 		Board board = new Board(7);
-		try {
+
 			board.addPiece(1, 1, CellContent.BLACK);
 			board.addPiece(1, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
 			board.addPiece(1, 2, CellContent.WHITE);
 			board.addPiece(2, 1, CellContent.WHITE);
 
-			board.updateScore();
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
 		assertEquals((int) 1,(int) board.getWhiteScore() );
 		assertEquals((int) 0,(int) board.getBlackScore() );
 	}
@@ -90,7 +79,6 @@ public class BoardTest {
 	@Test
 	public void add_loop_doubly(){
 		Board board = new Board(7);
-		try {
 			board.addPiece(1, 1, CellContent.BLACK);
 			board.addPiece(1, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
@@ -109,11 +97,7 @@ public class BoardTest {
 			
 		
 
-			board.updateScore();
 
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
 		assertEquals((int) 2,(int) board.getWhiteScore() );
 		assertEquals((int) 0,(int) board.getBlackScore() );
 	}
@@ -133,7 +117,7 @@ public class BoardTest {
 
 			
 		// left side
-		try {
+	
 			board.addPiece(1, 1, CellContent.BLACK);
 			board.addPiece(1, 0, CellContent.WHITE);
 			board.addPiece(0, 1, CellContent.WHITE);
@@ -163,11 +147,7 @@ public class BoardTest {
 			board.addPiece(2, 3, CellContent.WHITE);
 			
 
-			board.updateScore();
 
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
 		assertEquals((int) 5,(int) board.getWhiteScore() );
 		assertEquals((int) 0,(int) board.getBlackScore() );
 	}
@@ -183,7 +163,7 @@ public class BoardTest {
 	@Test
 	public void loop_inside_loop(){
 		Board board = new Board(7);
-		try {
+	
 			board.addPiece(2, 3, CellContent.BLACK);
 			board.addPiece(2, 2, CellContent.WHITE);
 			board.addPiece(1, 3, CellContent.WHITE);
@@ -215,10 +195,7 @@ public class BoardTest {
 			board.addPiece(2, 1, CellContent.BLACK);
 			board.addPiece(1, 1, CellContent.BLACK);
 
-			
-		} catch (Exception e){
-			
-		}
+
 
 		assertEquals((int) 0,(int) board.getWhiteScore() );
 		assertEquals((int) 8,(int) board.getBlackScore() );
@@ -231,11 +208,7 @@ public class BoardTest {
 		Board board = new Board(7);
 		ArrayList<Point> moves = board.getMove();
 		assertEquals((int) 7*7,(int) moves.size() );
-		try {
-			board.addPiece(2, 3, CellContent.BLACK);
-		} catch (Exception e){
-			
-		}
+		board.addPiece(2, 3, CellContent.BLACK);
 		moves = board.getMove();
 		assertEquals((int) 7*7 - 1,(int) moves.size() );
 	}
