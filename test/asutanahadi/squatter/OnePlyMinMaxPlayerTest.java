@@ -6,9 +6,18 @@ import org.junit.Test;
 
 public class OnePlyMinMaxPlayerTest {
 
+	GenericPlayerTestModule g;
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void dumbVsdumb_7(){
+		g = new GenericPlayerTestModule(new OnePlyMinMaxPlayer(), new OnePlyMinMaxPlayer(),7);
+		g.refreeTest();
+	}
+	
+	@Test
+	public void dumbVsdumb_6(){
+		g = new GenericPlayerTestModule(new OnePlyMinMaxPlayer(), new OnePlyMinMaxPlayer(),6);
+		g.refreeTest();
 	}
 
 }

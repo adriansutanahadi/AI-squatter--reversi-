@@ -17,12 +17,10 @@ public class OnePlyMinMaxPlayer extends FirstDumbPlayer {
 		m.Col = moves.get(0).x;
 
 		m.Row = moves.get(0).y;
-		try{
+
 		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
-		}
-		catch (Exception e){
-			System.out.println(e);
-		}
+
+
 		// check if there is a piece on that position.
 		return m;
 	}
