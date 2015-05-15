@@ -67,11 +67,11 @@ public class Board {
 	}
 	
 	// Add a single piece to the specified location, return True if succeed 
-	public int addPiece(int row, int col, CellContent player) throws Exception {
-		if (grid[row][col] == CellContent.FREE){
-			grid[row][col] = player;
+	public int addPiece(int x, int y, CellContent player) throws Exception {
+		if (grid[x][y] == CellContent.FREE){
+			grid[x][y] = player;
 			freeCellCount--;
-			updateBoard(row, col, player);
+			updateBoard(x, y, player);
 			updateScore();
 			return 0;
 		}else {
@@ -80,8 +80,8 @@ public class Board {
 		
 	}
 	
-	private void updateBoard(int row, int col, CellContent player) {
-		ArrayList<ArrayList<Point>> loops = findLoop(row, col, player);
+	private void updateBoard(int x, int y, CellContent player) {
+		ArrayList<ArrayList<Point>> loops = findLoop(x, y, player);
 		
 		// for each loop, check if there are new captured pieces
 		for (ArrayList<Point> loop : loops) {
@@ -146,7 +146,7 @@ public class Board {
 		}
 	}
 	
-	private ArrayList<ArrayList<Point>> findLoop(int row, int col, CellContent player) {
+	private ArrayList<ArrayList<Point>> findLoop(int x, int y, CellContent player) {
 		
 		// define the 8 directions
 		Point nw = new Point(-1, -1);
@@ -159,7 +159,7 @@ public class Board {
 		Point w = new Point(-1, 0);
 		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
 		
-		Point firstPiece = new Point(row,col);
+		Point firstPiece = new Point(x,y);
 		
 		ArrayList<ArrayList<Point>> loops = new ArrayList<ArrayList<Point>>(); // to store loops
 		ArrayList<Point> discovered = new ArrayList<Point>(); // to store discovered item in the graph
