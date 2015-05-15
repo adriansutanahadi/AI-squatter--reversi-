@@ -1,8 +1,8 @@
 package asutanahadi.squatter;
 
-import static org.junit.Assert.fail;
 
-import org.junit.Test;
+
+
 
 public class GenericPlayerTestModule {
 	private Player P1;
@@ -10,14 +10,16 @@ public class GenericPlayerTestModule {
 	private Move lastPlayedMove;
 	private int board_size;
 	
+
 	public GenericPlayerTestModule(FirstDumbPlayer p1,FirstDumbPlayer p2,int board_size) {
 		this.P1 = p1;
 		this.P2 = p2;
 		this.board_size = board_size;
+		
 		// TODO Auto-generated constructor stub
 	}
-
-	public void refreeTest() {
+	
+	public void refreeTest() throws Exception {
 		
 
 		
@@ -38,16 +40,16 @@ public class GenericPlayerTestModule {
 			System.out.println("Placing to. "+lastPlayedMove.Row+":"+lastPlayedMove.Col+" by "+lastPlayedMove.P);		
 			P1.printBoard(System.out);
 			boardEmptyPieces--;			
-
-			if(P2.opponentMove(lastPlayedMove)<0)
+			
+			if(P2.opponentMove(lastPlayedMove)<0 )
 			{
 				System.out.println("Exception: Player 2 rejected the move of player 1.");
 				P1.printBoard(System.out);
 				P2.printBoard(System.out);
-				fail("Exception: Player 2 rejected the move of player 1.");
-
+				throw new Exception("Exception: Player 2 rejected the move of player 1.");
 				
-				break;
+				
+
 			}			
 			else if(P2.getWinner()==0  && P1.getWinner()==0){
 				NumberofMoves++;	
@@ -61,8 +63,8 @@ public class GenericPlayerTestModule {
 				System.out.println("Exception: Player 1 rejected the move of player 2.");
 				P2.printBoard(System.out);
 				P1.printBoard(System.out);
-				fail("Exception: Player 1 rejected the move of player 2.");
-				break;
+				throw new Exception("Exception: Player 1 rejected the move of player 2.");
+
 			}
 			}
 			
