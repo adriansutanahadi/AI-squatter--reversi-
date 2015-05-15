@@ -9,6 +9,7 @@ import asutanahadi.squatter.Board.CellContent;
 
 public class FirstDumbPlayer implements Player, Piece {
 	Board b;
+	Boolean illegalMoveMade = false;
 	int playerSide;
 	
 	/* This funstion is called by the referee to initialise the player.
@@ -95,14 +96,29 @@ public class FirstDumbPlayer implements Player, Piece {
 		} catch (Exception e){
 			System.out.println(e);
 		}
+		illegalMoveMade = true;
 		return legal;
 	}
 
+
+	/* This function when called by referee should return the winner
+	 *	Return -1, 0, 1, 2, 3 for INVALID, EMPTY, WHITE, BLACK, DEAD respectively
+	 */
 	@Override
 	public int getWinner() {
-		
-		// TODO Auto-generated method stub
-		return 0;
+		if (illegalMoveMade == True) {
+			return -1;
+		} else if (board.isFinished()) {
+			if (board.getBlackScore() > board.getWhiteScore()){
+				return 2;
+			} else if (board.getWhiteScore() > board.getBlackScore()){
+				return 1;
+			} else {
+				return 3;
+			}
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
