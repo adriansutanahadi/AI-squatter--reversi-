@@ -46,7 +46,7 @@ public class GenericPlayerTestModule {
 				System.out.println("Exception: Player 2 rejected the move of player 1.");
 				P1.printBoard(System.out);
 				P2.printBoard(System.out);
-				//throw new Exception("Exception: Player 2 rejected the move of player 1.");
+				throw new Exception("Exception: Player 2 rejected the move of player 1.");
 				
 				
 
@@ -63,7 +63,7 @@ public class GenericPlayerTestModule {
 				System.out.println("Exception: Player 1 rejected the move of player 2.");
 				P2.printBoard(System.out);
 				P1.printBoard(System.out);
-				//throw new Exception("Exception: Player 1 rejected the move of player 2.");
+				throw new Exception("Exception: Player 1 rejected the move of player 2.");
 
 			}
 			}
