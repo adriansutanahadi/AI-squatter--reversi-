@@ -16,7 +16,7 @@ public class FirstDumbPlayerTest {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.getMessage());
-			System.exit(1);
+
 		}
 	}
 	
@@ -28,7 +28,7 @@ public class FirstDumbPlayerTest {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.getMessage());
-			System.exit(1);
+
 		}
 	}
 
