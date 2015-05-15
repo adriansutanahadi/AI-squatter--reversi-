@@ -67,7 +67,7 @@ public class Board {
 	}
 	
 	// Add a single piece to the specified location, return True if succeed 
-	public int addPiece(int x, int y, CellContent player) throws Exception {
+	public Boolean addPiece(int x, int y, CellContent player) throws Exception {
 		if (grid[x][y] == CellContent.FREE){
 			grid[x][y] = player;
 			freeCellCount--;

@@ -94,7 +94,7 @@ public class FirstDumbPlayer implements Player, Piece {
 				}
 			} else if (m.P == WHITE && this.playerSide == BLACK) {
 				if (b.addPiece(m.Col, m.Row, CellContent.WHITE)){
-					legal = 0
+					legal = 0;
 				}
 			}
 		} catch (Exception e){
@@ -112,12 +112,12 @@ public class FirstDumbPlayer implements Player, Piece {
 	 */
 	@Override
 	public int getWinner() {
-		if (illegalMoveMade == True) {
+		if (illegalMoveMade == true) {
 			return -1;
-		} else if (board.isFinished()) {
-			if (board.getBlackScore() > board.getWhiteScore()){
+		} else if (b.isFinished()) {
+			if (b.getBlackScore() > b.getWhiteScore()){
 				return 2;
-			} else if (board.getWhiteScore() > board.getBlackScore()){
+			} else if (b.getWhiteScore() > b.getBlackScore()){
 				return 1;
 			} else {
 				return 3;
@@ -136,12 +136,19 @@ public class FirstDumbPlayer implements Player, Piece {
 				CellContent c = b.getGrid()[i][j];
 				switch (c) {
 					case BLACK: s = "B";
+					break;
 					case WHITE: s = "W" ;
+					break;
 					case CAPTURED_FREE: s = "-" ;
+					break;
 					case CAPTURED_WHITE: s = "w" ;
+					break;
 					case CAPTURED_BLACK: s = "b" ;
+					break;
 					case FREE: s = "+" ;
+					break;
 					default: s = "";
+					break;
 				}
 				output.print(s);
 				if (j != d-1) output.print(" ");
