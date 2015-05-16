@@ -39,17 +39,17 @@ public class OnePlyMinMaxPlayer extends FirstDumbPlayer {
 		return bestMove;
 	}
 	
-	//Simple Generic Evaluation Function
+	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b,int side){
 		int k1 = 0;
 		int k2 = 0;
 		if (side == WHITE) {
 			k1 = 1;
-			k2 = -1;
+			k2 = -1 * 2;
 		} else if (side == BLACK) {
-			k1 = -1;
+			k1 = -1 * 2;
 			k2 = 1;
 		}
-		return k1 * b.getWhiteScore() + k2 * b.getBlackScore();
+		return k1 * b.getWhiteScore() + k1 + k2 * b.getBlackScore() + k2;
 	}
 }
