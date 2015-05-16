@@ -36,6 +36,8 @@ public class Board {
 	public CellContent[][] getGrid() {
 		return grid;
 	}
+	
+
 
 	public Integer getBlackScore() {
 		return blackScore;
@@ -244,6 +246,16 @@ public class Board {
 		return moves;
 	}
 	
+	public static void copy_grid(Board target,Board copy){
+		CellContent[][] target_grid = target.getGrid();
+		CellContent[][] copy_grid = copy.getGrid();
+		for (int i = 0; i < copy.getDimension(); i++) {
+			for (int j = 0 ; j<copy.getDimension();j++){
+				target_grid[i][j] = copy_grid[i][j];
+			}
+		}
+		
+	}
 	
 	// insert cell content at the specific row
 	// row starts from 0

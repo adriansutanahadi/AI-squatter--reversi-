@@ -9,8 +9,8 @@ public class OnePlyMinMaxPlayerTest {
 	GenericPlayerTestModule g;
 	
 	@Test
-	public void dumbVsdumb_7(){
-		g = new GenericPlayerTestModule(new OnePlyMinMaxPlayer(), new OnePlyMinMaxPlayer(),7);
+	public void onePlyvsonePly_7(){
+		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new OnePlyMinMaxPlayer(),7);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
@@ -21,8 +21,8 @@ public class OnePlyMinMaxPlayerTest {
 	}
 	
 	@Test
-	public void dumbVsdumb_6(){
-		g = new GenericPlayerTestModule(new OnePlyMinMaxPlayer(), new OnePlyMinMaxPlayer(),6);
+	public void onePlyvsonePly_6(){
+		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new OnePlyMinMaxPlayer(),6);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
