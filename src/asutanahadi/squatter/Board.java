@@ -139,6 +139,7 @@ public class Board {
 							case FREE:
 								grid[i][j] = CellContent.CAPTURED_FREE;
 								capturedCellsMap.add(new Point(i, j));
+								freeCellCount--;
 								break;
 							case BLACK:
 								grid[i][j] = CellContent.CAPTURED_BLACK;
@@ -157,6 +158,7 @@ public class Board {
 							case FREE:
 								grid[i][j] = CellContent.CAPTURED_FREE;
 								capturedCellsMap.add(new Point(i, j));
+								freeCellCount--;
 								break;
 							case WHITE:
 								grid[i][j] = CellContent.CAPTURED_WHITE;
@@ -213,9 +215,9 @@ public class Board {
 			// use depth-first search to check for a loop
 			while (!queue.empty()) {
 				Point currentPosition = queue.pop();
-				if (!discovered.contains(currentPosition)) {
+				if (!pathList.get(i).contains(currentPosition)) {
 					// visit the piece
-					discovered.add(currentPosition);
+					//discovered.add(currentPosition);
 					pathList.get(i).add(new Point(currentPosition));
 					
 					// check for available pieces to go to in 8 directions

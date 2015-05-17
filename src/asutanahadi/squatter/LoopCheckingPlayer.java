@@ -26,7 +26,7 @@ public class LoopCheckingPlayer extends FirstDumbPlayer {
 		int score = -1;
 		Point bestMove = possible_move.get(0);
 		int current_score;
-		for (Point m: possible_move) {
+		for (Point m: possible_move) { 
 			Board current_board = new Board(b.getDimension());
 			Board.copy_grid(current_board,b);
 			current_board.addPiece(m.x, m.y, playerSidetoBoardSide());
