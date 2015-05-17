@@ -26,6 +26,9 @@ public class Board {
 	private CellContent[][] grid = null;
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
+	ArrayList<ArrayList<Point>> loops;
+	ArrayList<ArrayList<Point>> incompleteLoops;
+	ArrayList<Integer> incompleteLoopsDistance;
 	//private boolean finished = false;
 	
 	// Getters Setters
@@ -36,8 +39,6 @@ public class Board {
 	public CellContent[][] getGrid() {
 		return grid;
 	}
-	
-
 
 	public Integer getBlackScore() {
 		return blackScore;
@@ -53,6 +54,32 @@ public class Board {
 
 	public ArrayList<Point> getCapturedCellsMap() {
 		return capturedCellsMap;
+	}
+	
+	public ArrayList<ArrayList<Point>> getLoops() {
+		return this.loops;
+	}
+	
+	// convert the loop into a Polygon object
+	public ArrayList<Polygon> getLoopsInPolygon() {
+		ArrayList<Polygon> loopsInPolygon = new ArrayList<Polygon>();
+		for (ArrayList<Point> loop : this.loops) {
+			// convert the loop into a Polygon object
+			Polygon loopPolygon = new Polygon();
+			for (Point p : loop) {
+				loopPolygon.addPoint(p.x, p.y);
+			}
+			loopsInPolygon.add(loopPolygon);
+		}
+		return loopsInPolygon;
+	}	
+	
+	public ArrayList<ArrayList<Point>> getIncompleteLoops() {
+		return this.incompleteLoops;
+	}
+	
+	public ArrayList<Integer> getIncompleteLoopsDistance() {
+		return this.incompleteLoopsDistance;
 	}
 	
 	// Initialize the board
@@ -81,23 +108,18 @@ public class Board {
 				e.printStackTrace();
 			}
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 		
 	}
 	
 	private void updateBoard(int x, int y, CellContent player) {
-		ArrayList<ArrayList<Point>> loops = findLoop(x, y, player);
+		findLoop(x, y, player);
+		ArrayList<Polygon> loopsInPolygon = getLoopsInPolygon();
 		
 		// for each loop, check if there are new captured pieces
-		for (ArrayList<Point> loop : loops) {
-			
-			// convert the loop into a Polygon object
-			Polygon loopPolygon = new Polygon();
-			for (Point p : loop) {
-				loopPolygon.addPoint(p.x, p.y);
-			}
+		for (Polygon loopPolygon : loopsInPolygon) {
 			
 			// limit the area of the search
 			Rectangle checkArea = loopPolygon.getBounds();
@@ -153,7 +175,7 @@ public class Board {
 		}
 	}
 	
-	private ArrayList<ArrayList<Point>> findLoop(int x, int y, CellContent player) {
+	private void findLoop(int x, int y, CellContent player) {
 		
 		// define the 8 directions
 		Point nw = new Point(-1, -1);
@@ -167,8 +189,10 @@ public class Board {
 		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
 		
 		Point firstPiece = new Point(x,y);
-		
-		ArrayList<ArrayList<Point>> loops = new ArrayList<ArrayList<Point>>(); // to store loops
+
+		this.loops = new ArrayList<ArrayList<Point>>(); // to store loops
+		this.incompleteLoops = new ArrayList<ArrayList<Point>>(); // to store incomplete loops
+		this.incompleteLoopsDistance = new ArrayList<Integer>(); // to store incomplete loops distance to the first piece
 		ArrayList<Point> discovered = new ArrayList<Point>(); // to store discovered item in the graph
 		
 		// to store the state when there is an intersection
@@ -209,7 +233,7 @@ public class Board {
 					for (int j = 0; j < nextPositionAvailable.size(); j++) {
 						if (nextPositionAvailable.get(j).equals(firstPiece)) {
 							// store the path if it creates a loop
-							loops.add(new ArrayList<Point>(pathList.get(i)));
+							this.loops.add(new ArrayList<Point>(pathList.get(i)));
 						} else if (!pathList.get(i).contains(nextPositionAvailable.get(j))) {
 							if (j == 0) {
 								// mark next piece to be traversed
@@ -221,12 +245,16 @@ public class Board {
 								prevPositionList.add(new Point(currentPosition));
 								pathList.add(new ArrayList<Point>(pathList.get(i)));
 							}
-						} 
+						}
+					}
+					
+					if (nextPositionAvailable.size() == 0) {
+						this.incompleteLoops.add(new ArrayList<Point>(pathList.get(i)));
+						this.incompleteLoopsDistance.add(Math.abs(currentPosition.x - firstPiece.x) + Math.abs(currentPosition.y - firstPiece.y));
 					}
 				}
 			}
 		}
-		return loops;
 	}
 	/*
 	 * Generate all possible moves in current board
