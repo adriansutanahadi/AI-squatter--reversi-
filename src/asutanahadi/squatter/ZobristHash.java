@@ -18,6 +18,7 @@ public class ZobristHash {
 	private long zobristKey[][][] = null;
 	private int dimension;
 
+
 	
 	public ZobristHash(int dimension){
 		zobristKey = new long[dimension][dimension][PIECE_TYPE];

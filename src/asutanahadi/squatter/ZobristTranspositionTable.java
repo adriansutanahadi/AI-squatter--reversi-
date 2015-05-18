@@ -20,11 +20,12 @@ public class ZobristTranspositionTable {
 	}
 	
 	
-	private class tableEntry {
-		private ScoreType scoreType;
-		private int score;
-		private Point bestMove;
-		private int depth;
+	public class tableEntry {
+		ScoreType scoreType;
+		int minScore;
+		int maxScore;
+		Point bestMove;
+		int depth;
 	}
 	
 	
