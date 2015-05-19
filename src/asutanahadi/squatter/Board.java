@@ -10,7 +10,7 @@ public class Board {
 	
 	// Board Declaration
 	// Changed each captured to individual CAPTURED BLACK / WHITE
-	public enum CellContent {
+	public static enum CellContent {
 		BLACK,
 		WHITE,
 		CAPTURED_FREE,
@@ -22,8 +22,8 @@ public class Board {
 	private Integer dimension;
 	private Integer blackScore;
 	private Integer whiteScore;
-	private Integer freeCellCount;
-	private CellContent[][] grid = null;
+	protected Integer freeCellCount;
+	protected CellContent[][] grid = null;
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
 	//private boolean finished = false;
@@ -87,7 +87,7 @@ public class Board {
 		
 	}
 	
-	private void updateBoard(int x, int y, CellContent player) {
+	protected void updateBoard(int x, int y, CellContent player) {
 		ArrayList<ArrayList<Point>> loops = findLoop(x, y, player);
 		
 		// for each loop, check if there are new captured pieces
