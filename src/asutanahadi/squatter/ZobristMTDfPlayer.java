@@ -7,12 +7,11 @@ import java.util.Random;
 
 import javax.naming.directory.SearchResult;
 
-import asutanahadi.squatter.ZobristTranspositionTable.tableEntry;
 
 // Idea for Zohrist from AI for games second edition
 public class ZobristMTDfPlayer extends FirstDumbPlayer {
 	
-	
+	ZobristBoard b;
 	private ZobristTranspositionTable tTable = null;
 	@Override
 	public int init(int n, int p) {
@@ -20,6 +19,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		if ((p == Piece.WHITE || p == Piece.BLACK) && n > 0) {
 			playerSide = p;
 			b = new ZobristBoard(n);
+			super.b = this.b;
 			// Board can be white,black ,white captured,black captured or empty
 
 			this.tTable = new ZobristTranspositionTable();
@@ -45,7 +45,8 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		int lowestDepth = -1;
 		if (currentDepth > lowestDepth) lowestDepth = currentDepth;
 		// Lookup the entry from the transposition table
-		ZobristTranspositionTable.tableEntry entry = tTable.table.get(searchBoard.board_hash);
+		ZobristTableEntry entry = tTable.table.get(searchBoard.board_hash);
+		if (entry == null) entry = new ZobristTableEntry();
 		if ( (entry != null) && (entry.depth > maxDepth - currentDepth)){
 			if (entry.minScore > gamma) {
 				return new SearchResult(entry.minScore, entry.bestMove);
@@ -54,8 +55,8 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			} else {
 				// We need to create the entry
 				entry.depth = maxDepth - currentDepth;
-				entry.minScore = -INFINITY;
-				entry.maxScore = INFINITY;
+				entry.minScore = Integer.MIN_VALUE;
+				entry.maxScore = Integer.MAX_VALUE;
 				this.tTable.table.put(searchBoard.board_hash,entry);
 			}
 		}
@@ -63,14 +64,16 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		// Check if we're done recursing
 		if (searchBoard.isFinished() || currentDepth == maxDepth){
 			//evaluate maybe wrong
-			entry.minScore = entry.maxScore = evaluate(searchBoard, this.playerSide);
+			entry.minScore =  evaluate(searchBoard, this.playerSide);
+			entry.maxScore = evaluate(searchBoard, this.playerSide);
 			this.tTable.table.put(searchBoard.board_hash,entry);
 			return new SearchResult(entry.minScore,null);
 		}
 		
-		￼￼￼￼￼￼￼￼//Now go into bubbling up mode
+
+		// Now go into bubbling mode
 		Point bestMove = null;
-		int bestScore = -INFINITY;
+		int bestScore = Integer.MIN_VALUE;
 	
 		ArrayList<Point> moves = searchBoard.getMove();
 		for (Point m: moves) {
@@ -86,21 +89,41 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			int currentScore = -recursedScore;
 			
 			if (currentScore > bestScore) {
-				entry.bestMove = m;
+				//disrespency with the book
+				//book uses m here we use bestMove
+				entry.bestMove = currentMove;
 				bestScore = currentScore;
 				bestMove = m;
 			}
-		
-			if (bestScore < gamma) {
-				entry.maxScore = bestScore;
-			} else {
-				entry.minScore = bestScore;
-			}
-			// Store the entry and return the best score and move.
-			this.tTable.table.put(searchBoard.board_hash,entry);
-			return new SearchResult(bestScore,bestMove);
+
 		}
+		
+		if (bestScore < gamma) {
+			entry.maxScore = bestScore;
+		} else {
+			entry.minScore = bestScore;
+		}
+		// Store the entry and return the best score and move.
+		this.tTable.table.put(searchBoard.board_hash,entry);
+		return new SearchResult(bestScore,bestMove);
+	}
 	
+	private Point mtd(ZobristBoard b,int maxDepth,int guess){
+		Point move = null;
+		SearchResult result;
+		while(true){
+			int gamma = guess;
+			result = test(b, maxDepth, 0, gamma-1);
+			guess = result.score;
+			move = result.bestMove;
+			if (gamma == guess )break;
+		}
+		
+		if (move == null){
+			move = b.getMove().get(0);
+		}
+		return move;
+		
 	}
 	
 	
@@ -108,9 +131,9 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 	public Move makeMove() {
 		Move m = new Move();
 
-		ArrayList<Point> moves = b.getMove();
+
 		
-		Point best_move = greedy_player(moves);
+		Point best_move = mtd(b, 2, Integer.MAX_VALUE);
 		
 		m.P = this.playerSide;
 		m.Col = best_move.x;
@@ -120,23 +143,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		return m;
 	}
 	
-	// Evaluate all possible moves with depth 1 and return the best one
-	private Point greedy_player(ArrayList<Point> possible_move){
-		int score = -1;
-		Point bestMove = possible_move.get(0);
-		int current_score;
-		for (Point m: possible_move) {
-			Board current_board = new Board(b.getDimension());
-			Board.copy_grid(current_board,b);
-			current_board.addPiece(m.x, m.y, playerSidetoBoardSide());
-			current_score = evaluate(current_board,this.playerSide);
-			if (current_score > score){
-				score = current_score;
-				bestMove = m;
-			}
-		}
-		return bestMove;
-	}
+
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b,int side){

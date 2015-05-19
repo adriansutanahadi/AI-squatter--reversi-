@@ -10,21 +10,23 @@ public class ZobristBoard extends Board {
 		super(dimension);
 		z = new ZobristHash(dimension);
 		board_hash = z.getHash(this);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public Boolean addPiece(int x, int y, CellContent player) {
-		//TODO
-		//Rehash when you add an item
+
+		// Everytime grid is set, you need to add the hash to the zobirst hash
 		if (grid[x][y] == CellContent.FREE){
 			grid[x][y] = player;
 			freeCellCount--;
 			updateBoard(x, y, player);
+			//TODO
+			// computationally expensive as it do not use incremental zobrist HASH
+			board_hash = z.getHash(this);
 			try {
 				updateScore();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 			return true;
@@ -32,6 +34,7 @@ public class ZobristBoard extends Board {
 			return false;
 		}
 		
-		
 	}
+	
+
 }
