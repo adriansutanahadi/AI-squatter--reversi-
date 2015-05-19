@@ -115,7 +115,8 @@ public class Board {
 	}
 	
 
-	private void updateBoard(int x, int y, CellContent player) {
+	protected void updateBoard(int x, int y, CellContent player) {
+		
 		findLoop(x, y, player);
 		ArrayList<Polygon> loopsInPolygon = getLoopsInPolygon();
 
@@ -178,6 +179,7 @@ public class Board {
 			}
 		}
 	}
+
 	
 	private void findLoop(int x, int y, CellContent player) {
 		
