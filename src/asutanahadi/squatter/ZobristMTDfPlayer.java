@@ -3,6 +3,7 @@ package asutanahadi.squatter;
 import java.awt.Point;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import javax.naming.directory.SearchResult;
@@ -76,6 +77,9 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		int bestScore = Integer.MIN_VALUE;
 	
 		ArrayList<Point> moves = searchBoard.getMove();
+		if (gamma <0){
+			Collections.reverse(moves);
+		}
 		for (Point m: moves) {
 			ZobristBoard new_board = new ZobristBoard(b.getDimension());
 			Board.copy_grid(new_board,searchBoard);
@@ -133,7 +137,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 
 
 		
-		Point best_move = mtd(b, 2, Integer.MAX_VALUE);
+		Point best_move = mtd(b, 5, Integer.MAX_VALUE);
 		
 		m.P = this.playerSide;
 		m.Col = best_move.x;

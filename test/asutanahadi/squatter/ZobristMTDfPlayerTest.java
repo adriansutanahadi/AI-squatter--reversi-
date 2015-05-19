@@ -9,7 +9,7 @@ public class ZobristMTDfPlayerTest {
 	
 	@Test
 	public void onePlyvsonePly_7(){
-		g = new GenericPlayerTestModule(new ZobristMTDfPlayer(), new OnePlyMinMaxPlayer(),7);
+		g = new GenericPlayerTestModule(new ZobristMTDfPlayer(), new ZobristMTDfPlayer(),7);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
@@ -21,7 +21,7 @@ public class ZobristMTDfPlayerTest {
 	
 	@Test
 	public void onePlyvsonePly_6(){
-		g = new GenericPlayerTestModule(new ZobristMTDfPlayer(), new ZobristMTDfPlayer(),6);
+		g = new GenericPlayerTestModule(new MinimaxPlayer(), new ZobristMTDfPlayer(),6);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {

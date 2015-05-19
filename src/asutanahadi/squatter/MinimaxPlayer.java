@@ -57,6 +57,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		} else {
 			Integer bestValue = Integer.MAX_VALUE;
 			ArrayList<Point> moves = state.getMove();
+			Collections.reverse(moves);
 			for (Point move : moves) {
 				Board currentBoard = new Board(state.getDimension());
 				Board.copy_grid(currentBoard, state);

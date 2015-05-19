@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public class Board {
@@ -269,10 +270,18 @@ public class Board {
 	 */
 	public ArrayList<Point> getMove(){
 		ArrayList<Point> moves = new ArrayList<Point>();
+		int moves_index = -1;
+		int front = 0;
 		for (int i = 0; i < this.dimension; i++) {
 			for (int j = 0; j < this.dimension; j++) {
 				if (grid[i][j] == CellContent.FREE){
 					moves.add(new Point(i,j));
+					moves_index++;
+				} else if (grid[i][j] == CellContent.BLACK || grid[i][j] == CellContent.WHITE) {
+					if (moves_index >= 0){
+						Collections.swap(moves, moves_index, front);
+						if (front<moves_index) front++;
+					}
 				}
 				
 			}
