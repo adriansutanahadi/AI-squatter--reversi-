@@ -55,7 +55,7 @@ public class FirstDumbPlayer implements Player, Piece {
 	protected CellContent playerSidetoBoardSide(){
 		if (this.playerSide == WHITE){
 			return CellContent.WHITE;
-		} else{
+		} else {
 			return CellContent.BLACK;
 		}
 	}
