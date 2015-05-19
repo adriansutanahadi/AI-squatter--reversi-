@@ -26,7 +26,7 @@ public class LoopCheckingPlayer extends FirstDumbPlayer {
 		int score = -1;
 		Point bestMove = possible_move.get(0);
 		int current_score;
-		for (Point m: possible_move) {
+		for (Point m: possible_move) { 
 			Board current_board = new Board(b.getDimension());
 			Board.copy_grid(current_board,b);
 			current_board.addPiece(m.x, m.y, playerSidetoBoardSide());
@@ -41,15 +41,15 @@ public class LoopCheckingPlayer extends FirstDumbPlayer {
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b,int side){
-		int l1 = b.getDimension() * 2;
+		int l1 = 0;
 		int l2 = 0;
 		int k1 = 0;
 		int k2 = 0;
-		
+
 		//check distance from first piece (lower, better)
 		for (int i = 0; i < b.getIncompleteLoops().size(); i++) {
-			if (b.getIncompleteLoopsDistance().get(i) < l1) {
-				l1 = b.getIncompleteLoopsDistance().get(i) / 2;
+			if (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i) > l1) {
+				l1 = (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i)) / 2;
 			}
 		}
 		//check length of incomplete loops (more, better)
