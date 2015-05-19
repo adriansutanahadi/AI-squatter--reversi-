@@ -137,7 +137,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 
 
 		
-		Point best_move = mtd(b, 5, Integer.MAX_VALUE);
+		Point best_move = mtd(b, 2, Integer.MAX_VALUE);
 		
 		m.P = this.playerSide;
 		m.Col = best_move.x;
@@ -160,6 +160,13 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			k1 = -1 * 2;
 			k2 = 1;
 		}
+		for (int i = 0; i < b.getDimension(); i++) {
+			for (int j = 0; j < b.getDimension(); j++) {
+				
+			}
+		}
+		
 		return k1 * b.getWhiteScore() + k1 + k2 * b.getBlackScore() + k2;
+	
 	}
 }

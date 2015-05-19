@@ -16,6 +16,11 @@ public class ZobristHash {
 
 	
 	private long zobristKey[][][] = null;
+	
+	public long[][][] getZobristKey() {
+		return zobristKey;
+	}
+
 	private int dimension;
 
 
@@ -63,5 +68,6 @@ public class ZobristHash {
         SecureRandom random = new SecureRandom();
         return random.nextLong();
     }
+
 
 }
