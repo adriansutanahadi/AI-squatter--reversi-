@@ -60,6 +60,15 @@ public class FirstDumbPlayer implements Player, Piece {
 		}
 	}
 	
+	// convert an enum from player class to reflect on board class (opposite)
+	protected CellContent oppositeSidetoBoardSide(){
+		if (this.playerSide == WHITE){
+			return CellContent.BLACK;
+		} else {
+			return CellContent.WHITE;
+		}
+	}	
+	
 	protected Move randomMove(){
 		Move m = new Move();
 		Random rand = new Random();
