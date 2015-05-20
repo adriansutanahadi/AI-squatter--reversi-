@@ -123,192 +123,273 @@ public class Board {
 		
 	}
 	
-
 	protected void updateBoard(int x, int y, CellContent player) {
-		
-		findLoop(x, y, player);
-		ArrayList<Polygon> loopsInPolygon = getLoopsInPolygon();
-
-		
-		// for each loop, check if there are new captured pieces
-		for (Polygon loopPolygon : loopsInPolygon) {
+		ArrayList<Point> capturedTop = floodFill(x, y-1, player);
+		ArrayList<Point> capturedLeft = floodFill(x+1, y, player);
+		ArrayList<Point> capturedBottom = floodFill(x, y+1, player);
+		ArrayList<Point> capturedRight = floodFill(x-1, y, player);
+		capturedTop.addAll(capturedLeft);
+		capturedTop.addAll(capturedBottom);
+		capturedTop.addAll(capturedRight);
+		for (Point p : capturedTop) {
+			CellContent piece = grid[p.x][p.y];
 			
-			// limit the area of the search
-			Rectangle checkArea = loopPolygon.getBounds();
-			Point topLeft = new Point(checkArea.x, checkArea.y);
-			Point bottomLeft = new Point(checkArea.x + checkArea.width, checkArea.y + checkArea.height);
-			
-			// search the area for new captured pieces
-			for (int i = topLeft.x; i <= bottomLeft.x; i++) {
-				for (int j = topLeft.y; j <= bottomLeft.y; j++) {
-					Point piecePosition = new Point(i, j);
-					CellContent piece = grid[i][j];
-					
-					// convert the piece to the captured ones if it is inside the polygon(loop)
-					if (player == CellContent.WHITE) {
-						if (loopPolygon.contains(piecePosition)) {
-							switch (piece) {
-							case FREE:
-								grid[i][j] = CellContent.CAPTURED_FREE;
-								capturedCellsMap.add(new Point(i, j));
-								freeCellCount--;
-								break;
-							case BLACK:
-								grid[i][j] = CellContent.CAPTURED_BLACK;
-								capturedCellsMap.add(new Point(i, j));
-								break;
-							case CAPTURED_WHITE:
-								grid[i][j] = CellContent.WHITE;
-								capturedCellsMap.remove(new Point(i, j));
-								break;
-							default:
-							}
-						}
-					} else if (player == CellContent.BLACK) {
-						if (loopPolygon.contains(piecePosition)) {
-							switch (piece) {
-							case FREE:
-								grid[i][j] = CellContent.CAPTURED_FREE;
-								capturedCellsMap.add(new Point(i, j));
-								freeCellCount--;
-								break;
-							case WHITE:
-								grid[i][j] = CellContent.CAPTURED_WHITE;
-								capturedCellsMap.add(new Point(i, j));
-								break;
-							case CAPTURED_BLACK:
-								grid[i][j] = CellContent.BLACK;
-								capturedCellsMap.remove(new Point(i, j));
-								break;
-							default:
-							}
-						}
-					}
+			// convert the piece to the captured ones if it is inside the polygon(loop)
+			if (player == CellContent.WHITE) {
+				switch (piece) {
+				case FREE:
+					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
+					capturedCellsMap.add(new Point(p.x, p.y));
+					freeCellCount--;
+					break;
+				case BLACK:
+					grid[p.x][p.y] = CellContent.CAPTURED_BLACK;
+					capturedCellsMap.add(new Point(p.x, p.y));
+					break;
+				case CAPTURED_WHITE:
+					grid[p.x][p.y] = CellContent.WHITE;
+					capturedCellsMap.remove(new Point(p.x, p.y));
+					break;
+				default:
+				}
+			} else if (player == CellContent.BLACK) {
+				switch (piece) {
+				case FREE:
+					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
+					capturedCellsMap.add(new Point(p.x, p.y));
+					freeCellCount--;
+					break;
+				case WHITE:
+					grid[p.x][p.y] = CellContent.CAPTURED_WHITE;
+					capturedCellsMap.add(new Point(p.x, p.y));
+					break;
+				case CAPTURED_BLACK:
+					grid[p.x][p.y] = CellContent.BLACK;
+					capturedCellsMap.remove(new Point(p.x, p.y));
+					break;
+				default:
 				}
 			}
 		}
 	}
+	
+	private ArrayList<Point> floodFill (int x, int y, CellContent player) {
+		ArrayList<Point> processedPoints = new ArrayList<Point>();
+		if (!checkCellValidity(new Point(x, y)) || grid[x][y] == player) {
+			return processedPoints;
+		}
+		// define the 4 directions
+		Point n = new Point(0, -1);
+		Point e = new Point(1, 0);
+		Point s = new Point(0, 1);
+		Point w = new Point(-1, 0);
+		Point[] directions = new Point[] {n, e, s, w};
+		
+		Stack<Point> queue = new Stack<Point>();
+		queue.push(new Point(x, y));
+		while(!queue.empty()) {
+			Point currentPosition = queue.pop();
+			if (grid[currentPosition.x][currentPosition.y] != player) {
+				processedPoints.add(currentPosition);
+				for (Point dir : directions) {
+					Point nextPosition = new Point(currentPosition.x + dir.x, currentPosition.y + dir.y);
+					if (!checkCellValidity(nextPosition)) {
+						return new ArrayList<Point>();
+					}
+					if (checkCellValidity(nextPosition) && !processedPoints.contains(nextPosition)) {
+						queue.push(nextPosition);
+					}
+				}
+			}
+		}
+		return processedPoints;
+	}
+	
+//	protected void updateBoard(int x, int y, CellContent player) {
+//		
+//		findLoop(x, y, player);
+//		ArrayList<Polygon> loopsInPolygon = getLoopsInPolygon();
+//
+//		
+//		// for each loop, check if there are new captured pieces
+//		for (Polygon loopPolygon : loopsInPolygon) {
+//			
+//			// limit the area of the search
+//			Rectangle checkArea = loopPolygon.getBounds();
+//			Point topLeft = new Point(checkArea.x, checkArea.y);
+//			Point bottomLeft = new Point(checkArea.x + checkArea.width, checkArea.y + checkArea.height);
+//			
+//			// search the area for new captured pieces
+//			for (int i = topLeft.x; i <= bottomLeft.x; i++) {
+//				for (int j = topLeft.y; j <= bottomLeft.y; j++) {
+//					Point piecePosition = new Point(i, j);
+//					CellContent piece = grid[i][j];
+//					
+//					// convert the piece to the captured ones if it is inside the polygon(loop)
+//					if (player == CellContent.WHITE) {
+//						if (loopPolygon.contains(piecePosition)) {
+//							switch (piece) {
+//							case FREE:
+//								grid[i][j] = CellContent.CAPTURED_FREE;
+//								capturedCellsMap.add(new Point(i, j));
+//								freeCellCount--;
+//								break;
+//							case BLACK:
+//								grid[i][j] = CellContent.CAPTURED_BLACK;
+//								capturedCellsMap.add(new Point(i, j));
+//								break;
+//							case CAPTURED_WHITE:
+//								grid[i][j] = CellContent.WHITE;
+//								capturedCellsMap.remove(new Point(i, j));
+//								break;
+//							default:
+//							}
+//						}
+//					} else if (player == CellContent.BLACK) {
+//						if (loopPolygon.contains(piecePosition)) {
+//							switch (piece) {
+//							case FREE:
+//								grid[i][j] = CellContent.CAPTURED_FREE;
+//								capturedCellsMap.add(new Point(i, j));
+//								freeCellCount--;
+//								break;
+//							case WHITE:
+//								grid[i][j] = CellContent.CAPTURED_WHITE;
+//								capturedCellsMap.add(new Point(i, j));
+//								break;
+//							case CAPTURED_BLACK:
+//								grid[i][j] = CellContent.BLACK;
+//								capturedCellsMap.remove(new Point(i, j));
+//								break;
+//							default:
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	
-	private void findLoop(int x, int y, CellContent player) {
-		
-		// define the 8 directions
-		Point nw = new Point(-1, -1);
-		Point n = new Point(0, -1);
-		Point ne = new Point(1, -1);
-		Point e = new Point(1, 0);
-		Point se = new Point(1, 1);
-		Point s = new Point(0, 1);
-		Point sw = new Point(-1, 1);
-		Point w = new Point(-1, 0);
-		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
-		
-		Point firstPiece = new Point(x,y);
-
-		this.loops = new ArrayList<ArrayList<Point>>(); // to store loops
-		
-		// to store the state when there is an intersection
-		ArrayList<Point> positionList = new ArrayList<Point>();
-		ArrayList<Point> prevPositionList = new ArrayList<Point>();
-		ArrayList<ArrayList<Point>> pathList = new ArrayList<ArrayList<Point>>();
-		ArrayList<Integer> pathListIndex = new ArrayList<Integer>();
-		
-		// initialise first move (which is the first piece)
-		positionList.add(new Point(firstPiece));
-		prevPositionList.add(new Point(firstPiece));
-		pathList.add(new ArrayList<Point>());
-		pathListIndex.add(new Integer(0));
-		
-		for (int i = 0; i < positionList.size(); i++) {
-			Stack<Point> queue = new Stack<Point>();
-			ArrayList<Point> path = new ArrayList<Point>(pathList.get(pathListIndex.get(i)));
-			queue.push(positionList.get(i));
-			Point prevPosition = prevPositionList.get(i);
-			
-			// use depth-first search to check for a loop
-			while (!queue.empty()) {
-				Point currentPosition = queue.pop();
-				if (!path.contains(currentPosition)) {
-					// visit the piece
-					path.add(new Point(currentPosition));
-					
-					// check for available pieces to go to in 8 directions
-					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
-					for (Point dir : directions) {
-						Point nextPosition = new Point(currentPosition.x + dir.x, currentPosition.y + dir.y);
-						if (!checkCellValidity(nextPosition)) {
-							continue;
-						}
-						if (!prevPosition.equals(nextPosition) && grid[nextPosition.x][nextPosition.y] == player) {
-							nextPositionAvailable.add(new Point(nextPosition));
-						}
-					}
-					
-					// if there is less than 2 piece surrounding the first piece, there is no loop.
-					if (currentPosition.equals(firstPiece) && nextPositionAvailable.size() < 2) {
-						break;
-					}
-					boolean intersect = false;
-					for (int j = 0; j < nextPositionAvailable.size(); j++) {
-						if (nextPositionAvailable.get(j).equals(firstPiece)) {
-							// store the path if it creates a loop
-//							this.loops.add(new ArrayList<Point>(pathList.get(i)));
-							ArrayList<ArrayList<Point>> removalList = new ArrayList<ArrayList<Point>>();
-							boolean addLoop = false;
-							for (ArrayList<Point> loop : this.loops) {
-								if (loop.size() < path.size()) {
-									// check if loop is inside pathList.get(i)
-									boolean inside = true;
-									for (Point p : loop) {
-										if (!path.contains(p)) {
-											inside = false;
-										}
-										if (inside) {
-											addLoop = true;
-											if (!removalList.contains(loop)) removalList.add(loop);
-										}
-									}
-								} else {
-									// check if pathList.get(i) is inside loop
-									boolean inside = true;
-									for (Point p : path) {
-										if (!loop.contains(p)) {
-											inside = false;
-										}
-										if (!inside) {
-											addLoop = true;
-										}
-									}
-								}
-							}
-							for (ArrayList<Point> loop : removalList) {
-								this.loops.remove(loop);
-							}
-							if (this.loops.size() == 0) {
-								addLoop = true;
-							}
-							if (addLoop && path.size() > 3) this.loops.add(new ArrayList<Point>(path));
-						} else if (!path.contains(nextPositionAvailable.get(j))) {
-							if (j == 0) {
-								// mark next piece to be traversed
-								queue.push(nextPositionAvailable.get(0));
-								prevPosition = currentPosition;
-							} else {
-								// store the other pieces, so that it can be continued when this one has finished traversing
-								positionList.add(new Point(nextPositionAvailable.get(j)));
-								prevPositionList.add(new Point(currentPosition));
-								intersect = true;
-								pathListIndex.add(new Integer(pathList.size()));
-							}
-						}
-						if (intersect) {
-							pathList.add(new ArrayList<Point>(path));
-						}
-					}
-				}
-			}
-		}
-	}
+//	private void findLoop(int x, int y, CellContent player) {
+//		
+//		// define the 8 directions
+//		Point nw = new Point(-1, -1);
+//		Point n = new Point(0, -1);
+//		Point ne = new Point(1, -1);
+//		Point e = new Point(1, 0);
+//		Point se = new Point(1, 1);
+//		Point s = new Point(0, 1);
+//		Point sw = new Point(-1, 1);
+//		Point w = new Point(-1, 0);
+//		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
+//		
+//		Point firstPiece = new Point(x,y);
+//
+//		this.loops = new ArrayList<ArrayList<Point>>(); // to store loops
+//		
+//		// to store the state when there is an intersection
+//		ArrayList<Point> positionList = new ArrayList<Point>();
+//		ArrayList<Point> prevPositionList = new ArrayList<Point>();
+//		ArrayList<ArrayList<Point>> pathList = new ArrayList<ArrayList<Point>>();
+//		ArrayList<Integer> pathListIndex = new ArrayList<Integer>();
+//		
+//		// initialise first move (which is the first piece)
+//		positionList.add(new Point(firstPiece));
+//		prevPositionList.add(new Point(firstPiece));
+//		pathList.add(new ArrayList<Point>());
+//		pathListIndex.add(new Integer(0));
+//		
+//		for (int i = 0; i < positionList.size(); i++) {
+//			Stack<Point> queue = new Stack<Point>();
+//			ArrayList<Point> path = new ArrayList<Point>(pathList.get(pathListIndex.get(i)));
+//			queue.push(positionList.get(i));
+//			Point prevPosition = prevPositionList.get(i);
+//			
+//			// use depth-first search to check for a loop
+//			while (!queue.empty()) {
+//				Point currentPosition = queue.pop();
+//				if (!path.contains(currentPosition)) {
+//					// visit the piece
+//					path.add(new Point(currentPosition));
+//					
+//					// check for available pieces to go to in 8 directions
+//					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
+//					for (Point dir : directions) {
+//						Point nextPosition = new Point(currentPosition.x + dir.x, currentPosition.y + dir.y);
+//						if (!checkCellValidity(nextPosition)) {
+//							continue;
+//						}
+//						if (!prevPosition.equals(nextPosition) && grid[nextPosition.x][nextPosition.y] == player) {
+//							nextPositionAvailable.add(new Point(nextPosition));
+//						}
+//					}
+//					
+//					// if there is less than 2 piece surrounding the first piece, there is no loop.
+//					if (currentPosition.equals(firstPiece) && nextPositionAvailable.size() < 2) {
+//						break;
+//					}
+//					boolean intersect = false;
+//					for (int j = 0; j < nextPositionAvailable.size(); j++) {
+//						if (nextPositionAvailable.get(j).equals(firstPiece)) {
+//							// store the path if it creates a loop
+////							this.loops.add(new ArrayList<Point>(pathList.get(i)));
+//							ArrayList<ArrayList<Point>> removalList = new ArrayList<ArrayList<Point>>();
+//							boolean addLoop = false;
+//							for (ArrayList<Point> loop : this.loops) {
+//								if (loop.size() < path.size()) {
+//									// check if loop is inside pathList.get(i)
+//									boolean inside = true;
+//									for (Point p : loop) {
+//										if (!path.contains(p)) {
+//											inside = false;
+//										}
+//										if (inside) {
+//											addLoop = true;
+//											if (!removalList.contains(loop)) removalList.add(loop);
+//										}
+//									}
+//								} else {
+//									// check if pathList.get(i) is inside loop
+//									boolean inside = true;
+//									for (Point p : path) {
+//										if (!loop.contains(p)) {
+//											inside = false;
+//										}
+//										if (!inside) {
+//											addLoop = true;
+//										}
+//									}
+//								}
+//							}
+//							for (ArrayList<Point> loop : removalList) {
+//								this.loops.remove(loop);
+//							}
+//							if (this.loops.size() == 0) {
+//								addLoop = true;
+//							}
+//							if (addLoop && path.size() > 3) this.loops.add(new ArrayList<Point>(path));
+//						} else if (!path.contains(nextPositionAvailable.get(j))) {
+//							if (j == 0) {
+//								// mark next piece to be traversed
+//								queue.push(nextPositionAvailable.get(0));
+//								prevPosition = currentPosition;
+//							} else {
+//								// store the other pieces, so that it can be continued when this one has finished traversing
+//								positionList.add(new Point(nextPositionAvailable.get(j)));
+//								prevPositionList.add(new Point(currentPosition));
+//								intersect = true;
+//								pathListIndex.add(new Integer(pathList.size()));
+//							}
+//						}
+//						if (intersect) {
+//							pathList.add(new ArrayList<Point>(path));
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 	/*
 	 * Generate all possible moves in current board
 	 * Not tested yet
@@ -414,7 +495,7 @@ public class Board {
 		check.y -= 1;
 		while (checkCellValidity(check)){
 			if (isCaptured(grid[check.x][check.y])){
-				return capturedCellsOwner.get(capturedCellsMap.indexOf(check));
+				check.y -= 1;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
 				break;
@@ -426,7 +507,7 @@ public class Board {
 		check.x -= 1;
 		while (checkCellValidity(check)){
 			if (isCaptured(grid[check.x][check.y])){
-				return capturedCellsOwner.get(capturedCellsMap.indexOf(check));
+				check.x -= 1;
 			} else {
 				surroundingCell.add(grid[check.x][check.y]);
 				break;
