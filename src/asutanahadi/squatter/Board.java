@@ -28,8 +28,6 @@ public class Board {
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
 	ArrayList<ArrayList<Point>> loops;
-	ArrayList<ArrayList<Point>> incompleteLoops;
-	ArrayList<Integer> incompleteLoopsDistance;
 	//private boolean finished = false;
 	
 	// Getters Setters
@@ -82,14 +80,6 @@ public class Board {
 		}
 		return loopsInPolygon;
 	}	
-	
-	public ArrayList<ArrayList<Point>> getIncompleteLoops() {
-		return this.incompleteLoops;
-	}
-	
-	public ArrayList<Integer> getIncompleteLoopsDistance() {
-		return this.incompleteLoopsDistance;
-	}
 	
 	// Initialize the board
 	public Board(Integer dimension){
@@ -216,32 +206,31 @@ public class Board {
 		Point firstPiece = new Point(x,y);
 
 		this.loops = new ArrayList<ArrayList<Point>>(); // to store loops
-		this.incompleteLoops = new ArrayList<ArrayList<Point>>(); // to store incomplete loops
-		this.incompleteLoopsDistance = new ArrayList<Integer>(); // to store incomplete loops distance to the first piece
-		ArrayList<Point> discovered = new ArrayList<Point>(); // to store discovered item in the graph
 		
 		// to store the state when there is an intersection
 		ArrayList<Point> positionList = new ArrayList<Point>();
 		ArrayList<Point> prevPositionList = new ArrayList<Point>();
 		ArrayList<ArrayList<Point>> pathList = new ArrayList<ArrayList<Point>>();
+		ArrayList<Integer> pathListIndex = new ArrayList<Integer>();
 		
 		// initialise first move (which is the first piece)
 		positionList.add(new Point(firstPiece));
 		prevPositionList.add(new Point(firstPiece));
 		pathList.add(new ArrayList<Point>());
+		pathListIndex.add(new Integer(0));
 		
 		for (int i = 0; i < positionList.size(); i++) {
 			Stack<Point> queue = new Stack<Point>();
+			ArrayList<Point> path = new ArrayList<Point>(pathList.get(pathListIndex.get(i)));
 			queue.push(positionList.get(i));
 			Point prevPosition = prevPositionList.get(i);
 			
 			// use depth-first search to check for a loop
 			while (!queue.empty()) {
 				Point currentPosition = queue.pop();
-				if (!pathList.get(i).contains(currentPosition)) {
+				if (!path.contains(currentPosition)) {
 					// visit the piece
-					//discovered.add(currentPosition);
-					pathList.get(i).add(new Point(currentPosition));
+					path.add(new Point(currentPosition));
 					
 					// check for available pieces to go to in 8 directions
 					ArrayList<Point> nextPositionAvailable = new ArrayList<Point>();
@@ -255,11 +244,51 @@ public class Board {
 						}
 					}
 					
+					// if there is less than 2 piece surrounding the first piece, there is no loop.
+					if (currentPosition.equals(firstPiece) && nextPositionAvailable.size() < 2) {
+						break;
+					}
+					boolean intersect = false;
 					for (int j = 0; j < nextPositionAvailable.size(); j++) {
 						if (nextPositionAvailable.get(j).equals(firstPiece)) {
 							// store the path if it creates a loop
-							this.loops.add(new ArrayList<Point>(pathList.get(i)));
-						} else if (!pathList.get(i).contains(nextPositionAvailable.get(j))) {
+//							this.loops.add(new ArrayList<Point>(pathList.get(i)));
+							ArrayList<ArrayList<Point>> removalList = new ArrayList<ArrayList<Point>>();
+							boolean addLoop = false;
+							for (ArrayList<Point> loop : this.loops) {
+								if (loop.size() < path.size()) {
+									// check if loop is inside pathList.get(i)
+									boolean inside = true;
+									for (Point p : loop) {
+										if (!path.contains(p)) {
+											inside = false;
+										}
+										if (inside) {
+											addLoop = true;
+											if (!removalList.contains(loop)) removalList.add(loop);
+										}
+									}
+								} else {
+									// check if pathList.get(i) is inside loop
+									boolean inside = true;
+									for (Point p : path) {
+										if (!loop.contains(p)) {
+											inside = false;
+										}
+										if (!inside) {
+											addLoop = true;
+										}
+									}
+								}
+							}
+							for (ArrayList<Point> loop : removalList) {
+								this.loops.remove(loop);
+							}
+							if (this.loops.size() == 0) {
+								addLoop = true;
+							}
+							if (addLoop && path.size() > 3) this.loops.add(new ArrayList<Point>(path));
+						} else if (!path.contains(nextPositionAvailable.get(j))) {
 							if (j == 0) {
 								// mark next piece to be traversed
 								queue.push(nextPositionAvailable.get(0));
@@ -268,14 +297,13 @@ public class Board {
 								// store the other pieces, so that it can be continued when this one has finished traversing
 								positionList.add(new Point(nextPositionAvailable.get(j)));
 								prevPositionList.add(new Point(currentPosition));
-								pathList.add(new ArrayList<Point>(pathList.get(i)));
+								intersect = true;
+								pathListIndex.add(new Integer(pathList.size()));
 							}
 						}
-					}
-					
-					if (nextPositionAvailable.size() == 0) {
-						this.incompleteLoops.add(new ArrayList<Point>(pathList.get(i)));
-						this.incompleteLoopsDistance.add(Math.abs(currentPosition.x - firstPiece.x) + Math.abs(currentPosition.y - firstPiece.y));
+						if (intersect) {
+							pathList.add(new ArrayList<Point>(path));
+						}
 					}
 				}
 			}
@@ -285,7 +313,7 @@ public class Board {
 	 * Generate all possible moves in current board
 	 * Not tested yet
 	 * TODO : pruning to be implemented
-	 */
+	 */ 
 	public ArrayList<Point> getMove(){
 		ArrayList<Point> moves = new ArrayList<Point>();
 		int moves_index = -1;

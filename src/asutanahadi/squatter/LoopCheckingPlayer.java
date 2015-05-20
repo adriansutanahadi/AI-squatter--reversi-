@@ -46,18 +46,18 @@ public class LoopCheckingPlayer extends FirstDumbPlayer {
 		int k1 = 0;
 		int k2 = 0;
 
-		//check distance from first piece (lower, better)
-		for (int i = 0; i < b.getIncompleteLoops().size(); i++) {
-			if (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i) > l1) {
-				l1 = (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i)) / 2;
-			}
-		}
-		//check length of incomplete loops (more, better)
-		for (int i = 0; i < b.getIncompleteLoops().size(); i++) {
-			if (b.getIncompleteLoops().get(i).size() > l2) {
-				l2 = b.getIncompleteLoops().get(i).size() / 2;
-			}
-		}
+//		//check distance from first piece (lower, better)
+//		for (int i = 0; i < b.getIncompleteLoops().size(); i++) {
+//			if (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i) > l1) {
+//				l1 = (b.getDimension() * 2 - b.getIncompleteLoopsDistance().get(i)) / 2;
+//			}
+//		}
+//		//check length of incomplete loops (more, better)
+//		for (int i = 0; i < b.getIncompleteLoops().size(); i++) {
+//			if (b.getIncompleteLoops().get(i).size() > l2) {
+//				l2 = b.getIncompleteLoops().get(i).size() / 2;
+//			}
+//		}
 		
 		if (side == WHITE) {
 			k1 = 1;
