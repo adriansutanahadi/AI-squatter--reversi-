@@ -37,12 +37,12 @@ public class ZobristBoard extends Board {
 			grid[x][y] = player;
 			freeCellCount--;
 			updateBoard(x, y, player);
-			this.board_hash = z.getHash(this);
+			//this.board_hash = z.getHash(this);
 			//TODO
 			// computationally expensive as it do not use incremental zobrist HASH
 			// incomplete as it does not store captured D:
 			
-//			board_hash = board_hash ^ z.getZobristKey()[x][y][player_key];
+			//board_hash = board_hash ^ z.getZobristKey()[x][y][player_key];
 			try {
 				updateScore();
 			} catch (Exception e) {

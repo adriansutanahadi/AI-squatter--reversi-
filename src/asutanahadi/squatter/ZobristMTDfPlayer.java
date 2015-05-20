@@ -13,13 +13,15 @@ import javax.naming.directory.SearchResult;
 public class ZobristMTDfPlayer extends FirstDumbPlayer {
 	
 	ZobristBoard b;
+	ZobristHash z;
 	private ZobristTranspositionTable tTable = null;
 	@Override
 	public int init(int n, int p) {
 		
 		if ((p == Piece.WHITE || p == Piece.BLACK) && n > 0) {
 			playerSide = p;
-			b = new ZobristBoard(n);
+			this.z = new ZobristHash(n);
+			b = new ZobristBoard(n,z);
 			super.b = this.b;
 			// Board can be white,black ,white captured,black captured or empty
 
@@ -81,8 +83,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			Collections.reverse(moves);
 		}
 		for (Point m: moves) {
-			ZobristBoard new_board = new ZobristBoard(b.getDimension());
-			Board.copy_grid(new_board,searchBoard);
+			ZobristBoard new_board = new ZobristBoard(searchBoard,z);
 			new_board.addPiece(m.x, m.y, playerSidetoBoardSide(true));
 			
 			//Recurse
@@ -137,7 +138,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 
 
 		
-		Point best_move = mtd(b, 2, Integer.MAX_VALUE);
+		Point best_move = mtd(b, 4 , Integer.MAX_VALUE);
 		
 		m.P = this.playerSide;
 		m.Col = best_move.x;

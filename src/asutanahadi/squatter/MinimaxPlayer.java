@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import asutanahadi.squatter.Board.CellContent;
+
 public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	/* Function called by referee to request a move by the player.
@@ -12,6 +14,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	ZobristBoard b;
 	ZobristHash z;
+	private int depth = 5;
 	private ZobristTranspositionTable tTable = null;
 	@Override
 	public int init(int n, int p) {
@@ -35,7 +38,8 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	public Move makeMove() {
 		Move m = new Move();
-		int depth = 5;
+		
+		update_depth();
 		Point best_move = minimax_decision(b, depth);
 		m.P = this.playerSide;
 		m.Col = best_move.x;
@@ -43,6 +47,23 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		// check if there is a piece on that position.
 		return m;
+	}
+	
+	private void update_depth(){
+		int total_round = b.getDimension() * b.getDimension();
+
+		int early_stage = total_round - total_round/3;
+		int middle_stage = total_round - (total_round/3)*2;
+		if (b.freeCellCount >= early_stage){
+			this.depth = 5;
+		} else if (b.freeCellCount >= middle_stage){
+			this.depth = 5;
+		} else {
+			this.depth = 5;
+		}
+
+	
+		
 	}
 	
 	// Evaluate all possible moves with depth n and return the best one
@@ -152,15 +173,32 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b, Board.CellContent side){
-		int k1 = 0;
-		int k2 = 0;
+		int w1 = 100;
+		int w2 = 90;
+		int sign = 0;
+		int black_side_score = 0;
+		int white_side_score = 0;
 		if (side == Board.CellContent.WHITE) {
-			k1 = 1;
-			k2 = -1 * 2;
+
+			sign = 1;
 		} else if (side == Board.CellContent.BLACK) {
-			k1 = -1 * 2;
-			k2 = 1;
+
+			sign = -1;
 		}
-		return ((k1 * b.getWhiteScore()) + k1 + (k2 * b.getBlackScore()) + k2);
+		for (int i = 0; i <b.getDimension(); i++) {
+			for (int j = 0; j < b.getDimension(); j++) {
+				CellContent content = b.grid[i][j];
+				if (j ==  0 || i==0 || j == b.getDimension() || i == b.getDimension()){
+					if (content == CellContent.BLACK){
+						black_side_score++;
+					} else if(content == CellContent.WHITE){
+						white_side_score++;
+					}
+				}
+				
+			}
+		}
+		int score = ((w1*sign * b.getWhiteScore())  + (w1*-sign * b.getBlackScore())) + w2*-sign*black_side_score + w2*sign*white_side_score;
+		return score;
 	}
 }
