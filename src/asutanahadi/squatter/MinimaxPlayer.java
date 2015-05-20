@@ -16,7 +16,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		m.P = this.playerSide;
 		m.Col = best_move.x;
 		m.Row = best_move.y;
-		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
+		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		// check if there is a piece on that position.
 		return m;
 	}
@@ -26,9 +26,8 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		ArrayList<Point> moves = state.getMove();
 		ArrayList<Integer> move_value = new ArrayList<Integer>();
 		for (Point move : moves) {
-			Board currentBoard = new Board(state.getDimension());
-			Board.copy_grid(currentBoard, state);
-			currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide());
+			Board currentBoard = new Board(state);
+			currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(true));
 			move_value.add(minimax_value(currentBoard, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
 		}
 		int maxScore = Collections.max(move_value);
@@ -37,15 +36,14 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	private int minimax_value(Board state, int depth, int alpha, int beta, boolean maximizingPlayer) {
 		if (depth == 0 || state.isFinished()) {
-			return evaluate(state, this.playerSide);
+			return evaluate(state, playerSidetoBoardSide(maximizingPlayer));
 		}
 		ArrayList<Point> moves = state.getMove();
 		if (maximizingPlayer) {
 			Integer bestValue = Integer.MIN_VALUE;
 			for (Point move : moves) {
-				Board currentBoard = new Board(state.getDimension());
-				Board.copy_grid(currentBoard, state);
-				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide());
+				Board currentBoard = new Board(state);
+				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
 				int val = minimax_value(currentBoard, depth - 1, alpha, beta, false);
 				bestValue = Math.max(bestValue, val);
 				alpha = Math.max(alpha, bestValue);
@@ -58,9 +56,8 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			Integer bestValue = Integer.MAX_VALUE;
 			Collections.reverse(moves);
 			for (Point move : moves) {
-				Board currentBoard = new Board(state.getDimension());
-				Board.copy_grid(currentBoard, state);
-				currentBoard.addPiece(move.x, move.y, oppositeSidetoBoardSide());
+				Board currentBoard = new Board(state);
+				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
 				int val = minimax_value(currentBoard, depth - 1, alpha, beta, true);
 				bestValue = Math.min(bestValue, val);
 				beta = Math.min(beta, bestValue);
@@ -73,16 +70,16 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	}
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
-	private int evaluate(Board b, int side){
+	private int evaluate(Board b, Board.CellContent side){
 		int k1 = 0;
 		int k2 = 0;
-		if (side == WHITE) {
+		if (side == Board.CellContent.WHITE) {
 			k1 = 1;
 			k2 = -1 * 2;
-		} else if (side == BLACK) {
+		} else if (side == Board.CellContent.BLACK) {
 			k1 = -1 * 2;
 			k2 = 1;
 		}
-		return k1 * b.getWhiteScore() + k1 + k2 * b.getBlackScore() + k2;
+		return ((k1 * b.getWhiteScore()) + k1 + (k2 * b.getBlackScore()) + k2);
 	}
 }

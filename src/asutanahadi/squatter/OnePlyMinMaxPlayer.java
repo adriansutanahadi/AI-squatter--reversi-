@@ -16,7 +16,7 @@ public class OnePlyMinMaxPlayer extends FirstDumbPlayer {
 		m.P = this.playerSide;
 		m.Col = best_move.x;
 		m.Row = best_move.y;
-		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
+		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		// check if there is a piece on that position.
 		return m;
 	}
@@ -29,7 +29,7 @@ public class OnePlyMinMaxPlayer extends FirstDumbPlayer {
 		for (Point m: possible_move) {
 			Board current_board = new Board(b.getDimension());
 			Board.copy_grid(current_board,b);
-			current_board.addPiece(m.x, m.y, playerSidetoBoardSide());
+			current_board.addPiece(m.x, m.y, playerSidetoBoardSide(true));
 			current_score = evaluate(current_board,this.playerSide);
 			if (current_score > score){
 				score = current_score;

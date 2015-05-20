@@ -83,7 +83,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		for (Point m: moves) {
 			ZobristBoard new_board = new ZobristBoard(b.getDimension());
 			Board.copy_grid(new_board,searchBoard);
-			new_board.addPiece(m.x, m.y, playerSidetoBoardSide());
+			new_board.addPiece(m.x, m.y, playerSidetoBoardSide(true));
 			
 			//Recurse
 			SearchResult recursedResult = test(new_board, maxDepth, currentDepth+1, -gamma);
@@ -142,7 +142,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		m.P = this.playerSide;
 		m.Col = best_move.x;
 		m.Row = best_move.y;
-		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
+		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		// check if there is a piece on that position.
 		return m;
 	}

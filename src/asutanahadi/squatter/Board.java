@@ -52,9 +52,17 @@ public class Board {
 	public boolean isFinished() {
 		return (freeCellCount == 0);
 	}
+	
+	public Integer getFreeCellCount() {
+		return freeCellCount;
+	}
 
 	public ArrayList<Point> getCapturedCellsMap() {
 		return capturedCellsMap;
+	}
+
+	public ArrayList<CellContent> getCapturedCellsOwner() {
+		return capturedCellsOwner;
 	}
 	
 	public ArrayList<ArrayList<Point>> getLoops() {
@@ -94,6 +102,16 @@ public class Board {
 			}
 		}
 		this.freeCellCount = dimension*dimension;
+	}
+	
+	public Board(Board b) {
+		this.dimension = b.getDimension();
+		grid = new CellContent[dimension][dimension];
+		this.whiteScore = b.getWhiteScore();
+		this.blackScore = b.getBlackScore();
+		this.freeCellCount = b.getFreeCellCount();
+		this.capturedCellsMap = new ArrayList<Point>(b.getCapturedCellsMap());
+		Board.copy_grid(this, b);
 	}
 	
 	// Add a single piece to the specified location, return True if succeed 
@@ -355,6 +373,13 @@ public class Board {
 	private CellContent checkCapturedCell(Point p) throws Exception{
 		Point check;
 		ArrayList<CellContent> surroundingCell = new ArrayList<CellContent>();
+		
+		if (grid[p.x][p.y] == CellContent.CAPTURED_BLACK) {
+			return CellContent.WHITE;
+		}
+		if (grid[p.x][p.y] == CellContent.CAPTURED_WHITE) {
+			return CellContent.BLACK;
+		}
 		
 		// check upwards
 		check = new Point(p);

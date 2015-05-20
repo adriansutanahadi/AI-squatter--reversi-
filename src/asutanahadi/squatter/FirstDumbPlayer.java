@@ -43,7 +43,7 @@ public class FirstDumbPlayer implements Player, Piece {
 
 		m.Row = moves.get(0).y;
 		try{
-		b.addPiece(m.Col, m.Row, playerSidetoBoardSide());
+		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		}
 		catch (Exception e){
 			System.out.println(e);
@@ -52,22 +52,21 @@ public class FirstDumbPlayer implements Player, Piece {
 		return m;
 	}
 	// convert an enum from player class to reflect on board class
-	protected CellContent playerSidetoBoardSide(){
-		if (this.playerSide == WHITE){
-			return CellContent.WHITE;
+	protected CellContent playerSidetoBoardSide(boolean notOppositePlayer){
+		if (notOppositePlayer) {
+			if (this.playerSide == WHITE){
+				return CellContent.WHITE;
+			} else {
+				return CellContent.BLACK;
+			}
 		} else {
-			return CellContent.BLACK;
+			if (this.playerSide == WHITE){
+				return CellContent.BLACK;
+			} else {
+				return CellContent.WHITE;
+			}
 		}
 	}
-	
-	// convert an enum from player class to reflect on board class (opposite)
-	protected CellContent oppositeSidetoBoardSide(){
-		if (this.playerSide == WHITE){
-			return CellContent.BLACK;
-		} else {
-			return CellContent.WHITE;
-		}
-	}	
 	
 	protected Move randomMove(){
 		Move m = new Move();
