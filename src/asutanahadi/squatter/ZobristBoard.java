@@ -1,14 +1,25 @@
 package asutanahadi.squatter;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 import asutanahadi.squatter.Board.CellContent;
 
 
 public class ZobristBoard extends Board {
-	protected long board_hash;
+	protected long board_hash; 
 	private ZobristHash z;
-	public ZobristBoard(Integer dimension) {
+	public ZobristBoard(Integer dimension,ZobristHash z) {
 		super(dimension);
-		z = new ZobristHash(dimension);
+		//
+		this.z = z;
+		board_hash = z.getHash(this);
+	}
+	
+	
+	public ZobristBoard(ZobristBoard b,ZobristHash z) {
+		super(b);
+		this.z = z;
 		board_hash = z.getHash(this);
 	}
 	
