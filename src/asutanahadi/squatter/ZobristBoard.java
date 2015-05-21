@@ -1,14 +1,25 @@
 package asutanahadi.squatter;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 import asutanahadi.squatter.Board.CellContent;
 
 
 public class ZobristBoard extends Board {
-	protected long board_hash;
+	protected long board_hash; 
 	private ZobristHash z;
-	public ZobristBoard(Integer dimension) {
+	public ZobristBoard(Integer dimension,ZobristHash z) {
 		super(dimension);
-		z = new ZobristHash(dimension);
+		//
+		this.z = z;
+		board_hash = z.getHash(this);
+	}
+	
+	
+	public ZobristBoard(ZobristBoard b,ZobristHash z) {
+		super(b);
+		this.z = z;
 		board_hash = z.getHash(this);
 	}
 	
@@ -26,12 +37,12 @@ public class ZobristBoard extends Board {
 			grid[x][y] = player;
 			freeCellCount--;
 			updateBoard(x, y, player);
-			this.board_hash = z.getHash(this);
+			//this.board_hash = z.getHash(this);
 			//TODO
 			// computationally expensive as it do not use incremental zobrist HASH
 			// incomplete as it does not store captured D:
 			
-//			board_hash = board_hash ^ z.getZobristKey()[x][y][player_key];
+			//board_hash = board_hash ^ z.getZobristKey()[x][y][player_key];
 			try {
 				updateScore();
 			} catch (Exception e) {
