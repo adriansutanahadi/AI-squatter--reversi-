@@ -72,13 +72,13 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	private Point minimax_decision(ZobristBoard state, int depth){
 		ArrayList<Point> moves = state.getMove();
 		ArrayList<Integer> move_value = new ArrayList<Integer>();
-		ZobristTableEntry entry = tTable.table.get(state.board_hash);
+		ZobristTableEntry entry = tTable.getEntry(state.board_hash);
 		if (entry == null){
 			for (Point move : moves) {
 				
 				ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(true));
-				ZobristTableEntry currentBoardHash = tTable.table.get(currentBoard.board_hash);
+				ZobristTableEntry currentBoardHash = tTable.getEntry(currentBoard.board_hash);
 				if (currentBoardHash == null){
 					move_value.add(minimax_value(currentBoard, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
 				} else {
@@ -87,7 +87,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			}
 			int maxScore = Collections.max(move_value);
 			Point bestMove = moves.get(move_value.indexOf(maxScore));
-			ZobristTableEntry tmpEntry = tTable.table.get(state.board_hash);
+			ZobristTableEntry tmpEntry = tTable.getEntry(state.board_hash);
 			if (tmpEntry == null){
 				ZobristTableEntry tableEntry = new ZobristTableEntry();
 				tableEntry.maxScore = maxScore;
@@ -107,17 +107,20 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			int score = evaluate(state, playerSidetoBoardSide(maximizingPlayer));
 			ZobristTableEntry entry = new ZobristTableEntry();
 			if (maximizingPlayer){
+				
 				entry.maxScore = score;
 				entry.depth = depth;
+				entry.hashValue = state.board_hash;
 			} else{
 				entry.minScore = score;
 				entry.depth = depth;
+				entry.hashValue = state.board_hash;
 			}
-			tTable.table.put(state.board_hash, entry);
+			tTable.storeEntry(entry);
 			return score;
 		}
 		ArrayList<Point> moves = state.getMove();
-		ZobristTableEntry entry = tTable.table.get(state.board_hash);
+		ZobristTableEntry entry = tTable.getEntry(state.board_hash);
 		if (maximizingPlayer) {
 			
 			if (entry == null){
@@ -126,7 +129,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 					int val;
 					ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 					currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
-					ZobristTableEntry currentBoardHash = tTable.table.get(currentBoard.board_hash);
+					ZobristTableEntry currentBoardHash = tTable.getEntry(currentBoard.board_hash);
 					if (currentBoardHash == null){
 						val = minimax_value(currentBoard, depth - 1, alpha, beta, false);
 					} else {
@@ -152,7 +155,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 				int val;
 				ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
-				ZobristTableEntry currentBoardHash = tTable.table.get(currentBoard.board_hash);
+				ZobristTableEntry currentBoardHash = tTable.getEntry(currentBoard.board_hash);
 				if (currentBoardHash == null){
 					val = minimax_value(currentBoard, depth - 1, alpha, beta, true);
 				} else {
