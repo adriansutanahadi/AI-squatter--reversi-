@@ -11,13 +11,14 @@ public class FirstDumbPlayer implements Player, Piece {
 	protected Board b;
 	private Boolean illegalMoveMade = false;
 	protected int playerSide;
+	Random rand;
 	
 	/* This funstion is called by the referee to initialise the player.
 	 *  Return 0 for successful initialization and -1 for failed one.
 	 */
 	@Override
 	public int init(int n, int p) {
-		
+		this.rand = new Random();
 		if ((p == Piece.WHITE || p == Piece.BLACK) && n > 0) {
 			playerSide = p;
 			b = new Board(n);
@@ -38,10 +39,10 @@ public class FirstDumbPlayer implements Player, Piece {
 
 		ArrayList<Point> moves = b.getMove();
 		m.P = this.playerSide;
-		
-		m.Col = moves.get(0).x;
+		int  n = rand.nextInt(moves.size());
+		m.Col = moves.get(n).x;
 
-		m.Row = moves.get(0).y;
+		m.Row = moves.get(n).y;
 		try{
 		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
 		}
