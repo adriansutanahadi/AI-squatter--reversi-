@@ -10,5 +10,5 @@ public class ZobristTableEntry {
 		int maxScore;
 		Point bestMove;
 		int depth;
-	
+		long hashValue;
 }

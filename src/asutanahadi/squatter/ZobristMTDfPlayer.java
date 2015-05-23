@@ -48,7 +48,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 		int lowestDepth = -1;
 		if (currentDepth > lowestDepth) lowestDepth = currentDepth;
 		// Lookup the entry from the transposition table
-		ZobristTableEntry entry = tTable.table.get(searchBoard.board_hash);
+		ZobristTableEntry entry = tTable.getEntry(searchBoard.board_hash);
 		if (entry == null) entry = new ZobristTableEntry();
 		if ( (entry != null) && (entry.depth > maxDepth - currentDepth)){
 			if (entry.minScore > gamma) {
@@ -60,7 +60,8 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 				entry.depth = maxDepth - currentDepth;
 				entry.minScore = Integer.MIN_VALUE;
 				entry.maxScore = Integer.MAX_VALUE;
-				this.tTable.table.put(searchBoard.board_hash,entry);
+				entry.hashValue = searchBoard.board_hash;
+				this.tTable.storeEntry(entry);
 			}
 		}
 		
@@ -69,7 +70,8 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			//evaluate maybe wrong
 			entry.minScore =  evaluate(searchBoard, this.playerSide);
 			entry.maxScore = evaluate(searchBoard, this.playerSide);
-			this.tTable.table.put(searchBoard.board_hash,entry);
+			entry.hashValue = searchBoard.board_hash;
+			this.tTable.storeEntry(entry);
 			return new SearchResult(entry.minScore,null);
 		}
 		
@@ -97,6 +99,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 				//disrespency with the book
 				//book uses m here we use bestMove
 				entry.bestMove = currentMove;
+				entry.hashValue = new_board.board_hash;
 				bestScore = currentScore;
 				bestMove = m;
 			}
@@ -109,7 +112,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 			entry.minScore = bestScore;
 		}
 		// Store the entry and return the best score and move.
-		this.tTable.table.put(searchBoard.board_hash,entry);
+		this.tTable.storeEntry(entry);
 		return new SearchResult(bestScore,bestMove);
 	}
 	
@@ -138,7 +141,7 @@ public class ZobristMTDfPlayer extends FirstDumbPlayer {
 
 
 		
-		Point best_move = mtd(b, 4 , Integer.MAX_VALUE);
+		Point best_move = mtd(b, 2 , Integer.MAX_VALUE);
 		
 		m.P = this.playerSide;
 		m.Col = best_move.x;

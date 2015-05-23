@@ -15,6 +15,7 @@ public class MinimaxPlayerTest {
 			g.refreeTest();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			fail(e.getMessage());
 
 		}
@@ -27,6 +28,7 @@ public class MinimaxPlayerTest {
 			g.refreeTest();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			fail(e.getMessage());
 
 		}

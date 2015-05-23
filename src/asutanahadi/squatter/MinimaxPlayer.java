@@ -29,6 +29,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		int bestScore = Integer.MIN_VALUE;
 		Point bestMove = null;
 		ArrayList<Point> moves = state.getMove();
+
 		for (Point move : moves) {
 			if (bestMove == null) {
 				bestMove = move;
@@ -39,6 +40,8 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			if (alpha > bestScore) {
 				bestMove = move;
 				bestScore = alpha;
+
+
 			}
 		}
 		return bestMove;
@@ -46,6 +49,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	private int minimax_value(Board state, int depth, int alpha, int beta, boolean maximizingPlayer) {
 		if (depth == 0 || state.isFinished()) {
+
 			return evaluate(state, playerSidetoBoardSide(maximizingPlayer));
 		}
 		ArrayList<Point> moves = state.getMove();
@@ -59,6 +63,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 				alpha = Math.max(alpha, bestValue);
 				if (beta <= alpha) {
 					break;
+
 				}
 			}
 			return bestValue;
@@ -68,7 +73,9 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			for (Point move : moves) {
 				Board currentBoard = new Board(state);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
+
 				int val = minimax_value(currentBoard, depth - 1, alpha, beta, true);
+
 				bestValue = Math.min(bestValue, val);
 				beta = Math.min(beta, bestValue);
 				if (beta <= alpha) {
