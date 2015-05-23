@@ -6,6 +6,31 @@ import java.util.Collections;
 
 public class MinimaxPlayer extends FirstDumbPlayer {
 	
+	private ZobristBoard b;		
+	ZobristHash z;		
+	
+	private ZobristTranspositionTable tTable = null;	
+	@Override		
+	public int init(int n, int p) {		
+
+		if ((p == Piece.WHITE || p == Piece.BLACK) && n > 0) {		
+			playerSide = p;		
+			this.z = new ZobristHash(n);		
+			b = new ZobristBoard(n,this.z);		
+
+			super.b = this.b;		
+			// Board can be white,black ,white captured,black captured or empty		
+
+			this.tTable = new ZobristTranspositionTable();		
+
+			return 0;		
+		} 		
+		else {		
+			return -1;		
+		}		
+	}		
+
+	
 	/* Function called by referee to request a move by the player.
 	 *  Return object of class Move
 	 */
@@ -23,7 +48,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	}
 	
 	// Evaluate all possible moves with depth 1 and return the best one
-	private Point minimax_decision(Board state, int depth){
+	private Point minimax_decision(ZobristBoard state, int depth){
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
 		int bestScore = Integer.MIN_VALUE;
@@ -34,7 +59,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			if (bestMove == null) {
 				bestMove = move;
 			}
-			Board currentBoard = new Board(state);
+			ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 			currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(true));
 			alpha = Math.max(alpha, minimax_value(currentBoard, depth - 1, alpha, beta, false));
 			if (alpha > bestScore) {
@@ -47,7 +72,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		return bestMove;
 	}
 	
-	private int minimax_value(Board state, int depth, int alpha, int beta, boolean maximizingPlayer) {
+	private int minimax_value(ZobristBoard state, int depth, int alpha, int beta, boolean maximizingPlayer) {
 		if (depth == 0 || state.isFinished()) {
 
 			return evaluate(state, playerSidetoBoardSide(maximizingPlayer));
@@ -56,7 +81,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		if (maximizingPlayer) {
 			Integer bestValue = Integer.MIN_VALUE;
 			for (Point move : moves) {
-				Board currentBoard = new Board(state);
+				ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
 				int val = minimax_value(currentBoard, depth - 1, alpha, beta, false);
 				bestValue = Math.max(bestValue, val);
@@ -71,7 +96,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			Integer bestValue = Integer.MAX_VALUE;
 			Collections.reverse(moves);
 			for (Point move : moves) {
-				Board currentBoard = new Board(state);
+				ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
 
 				int val = minimax_value(currentBoard, depth - 1, alpha, beta, true);
