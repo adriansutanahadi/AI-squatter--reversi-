@@ -7,9 +7,10 @@ import java.util.Collections;
 public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	private ZobristBoard b;		
-	ZobristHash z;		
+	ZobristHash z;
 	
-	private ZobristTranspositionTable tTable = null;	
+	
+	private ZobristTranspositionTable tTable;	
 	@Override		
 	public int init(int n, int p) {		
 
@@ -53,8 +54,15 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		int beta = Integer.MAX_VALUE;
 		int bestScore = Integer.MIN_VALUE;
 		Point bestMove = null;
-		ArrayList<Point> moves = state.getMove();
+		ZobristTableEntry entry = tTable.getEntry(state.board_hash);
 
+		ArrayList<Point> moves = state.getMove();
+		if (entry != null){
+			Point entryBestMove = entry.bestMove;
+			move_order(entryBestMove, moves);
+			//TODO
+			//Move Order
+		}
 		for (Point move : moves) {
 			if (bestMove == null) {
 				bestMove = move;
@@ -78,6 +86,11 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			return evaluate(state, playerSidetoBoardSide(maximizingPlayer));
 		}
 		ArrayList<Point> moves = state.getMove();
+		ZobristTableEntry entry = tTable.getEntry(state.board_hash);
+		if (entry != null){
+			//TODO
+			//Move Order
+		}
 		if (maximizingPlayer) {
 			Integer bestValue = Integer.MIN_VALUE;
 			for (Point move : moves) {
@@ -94,7 +107,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			return bestValue;
 		} else {
 			Integer bestValue = Integer.MAX_VALUE;
-			Collections.reverse(moves);
+
 			for (Point move : moves) {
 				ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 				currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(maximizingPlayer));
@@ -109,6 +122,20 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			}
 			return bestValue;
 		}
+	}
+	
+	//Move order the array of moves so that the best one will be opened first
+	private void move_order(Point highPriorityMove, ArrayList<Point> moves){
+		int bestIndex = 0;
+		int i = 0;
+		for (Point move : moves) {
+			i++;
+			if (moves.equals(highPriorityMove)){
+				bestIndex = i;
+			}
+		}
+		//Swap the position
+		Collections.swap(moves, bestIndex, 0);
 	}
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
