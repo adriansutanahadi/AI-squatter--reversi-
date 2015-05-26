@@ -122,7 +122,7 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 
 
 				
-			alpha = Math.max(alpha, minimax_value(currentBoard, depth - 1, alpha, beta, false));
+			alpha = Math.max( alpha, minimax_value(currentBoard, depth - 1, alpha, beta, false));
 			if (alpha > bestScore) {
 				bestMove = move;
 				bestScore = alpha;
