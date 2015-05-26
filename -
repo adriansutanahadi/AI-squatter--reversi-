@@ -1,0 +1,25 @@
+-			
+-	ZobristBoard b;		
+-	ZobristHash z;		
+-	private int depth = 5;		
+-	private ZobristTranspositionTable tTable = null;		
+-	@Override		
+-	public int init(int n, int p) {		
+-				
+-		if ((p == Piece.WHITE || p == Piece.BLACK) && n > 0) {		
+-			playerSide = p;		
+-			this.z = new ZobristHash(n);		
+-			b = new ZobristBoard(n,this.z);		
+-					
+-			super.b = this.b;		
+-			// Board can be white,black ,white captured,black captured or empty		
+-		
+-			this.tTable = new ZobristTranspositionTable();		
+-					
+-			return 0;		
+-		} 		
+-		else {		
+-			return -1;		
+-		}		
+-	}		
+-	
