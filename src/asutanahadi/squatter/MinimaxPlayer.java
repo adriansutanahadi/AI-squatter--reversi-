@@ -118,23 +118,16 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			ZobristBoard currentBoard = new ZobristBoard(state,this.z);
 			currentBoard.addPiece(move.x, move.y, playerSidetoBoardSide(true));
 			
-			ZobristTableEntry entry = tTable.getEntry(currentBoard.board_hash);
-			if (entry == null){	
 
 
-						
-				alpha = Math.max(alpha, minimax_value(currentBoard, depth - 1, alpha, beta, false));
-				if (alpha > bestScore) {
-					bestMove = move;
-					bestScore = alpha;
-				} 
-			}else {
-				alpha = Math.max(alpha, entry.maxScore);
-				if (alpha > bestScore){
-					bestMove = entry.bestMove;
-					bestScore = alpha;
-				}
-			}
+
+				
+			alpha = Math.max(alpha, minimax_value(currentBoard, depth - 1, alpha, beta, false));
+			if (alpha > bestScore) {
+				bestMove = move;
+				bestScore = alpha;
+			} 
+
 
 
 			
