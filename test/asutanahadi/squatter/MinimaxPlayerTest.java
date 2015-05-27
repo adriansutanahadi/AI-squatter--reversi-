@@ -8,29 +8,53 @@ import org.junit.Test;
 public class MinimaxPlayerTest {
 	GenericPlayerTestModule g;
 
-	@Test
-	public void minimaxVsMinimax_7(){
-		g = new GenericPlayerTestModule(new MinimaxPlayer(), new MinimaxPlayer(),7);
-		try {
-			g.refreeTest();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			fail(e.getMessage());
-
-		}
-	}
+//	@Test
+//	public void minimaxVsMinimax_7(){
+//		g = new GenericPlayerTestModule(new MinimaxPlayer(), new MinimaxPlayer(),7);
+//		try {
+//			g.refreeTest();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			fail(e.getMessage());
+//
+//		}
+//	}
+//	
+//	@Test
+//	public void minimaxVsMinimax_6(){
+//		g = new GenericPlayerTestModule(new MinimaxPlayer(), new MinimaxPlayer(),6);
+//		try {
+//			g.refreeTest();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			fail(e.getMessage());
+//
+//		}
+//	}
 	
 	@Test
-	public void minimaxVsMinimax_6(){
-		g = new GenericPlayerTestModule(new MinimaxPlayer(), new MinimaxPlayer(),6);
+	public void smartVsdumb_6(){
+		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new MinimaxPlayer(),6);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			fail(e.getMessage());
 
 		}
-	}
+	}	
+	
+	@Test
+	public void smartVsdumb_7(){
+		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new MinimaxPlayer(),7);
+		try {
+			g.refreeTest();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			fail(e.getMessage());
+
+		}
+	}	
 }

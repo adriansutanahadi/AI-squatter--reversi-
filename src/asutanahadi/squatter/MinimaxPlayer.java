@@ -63,28 +63,31 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	 */
 	public Move makeMove() {
 		Move m = new Move();
-		this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) * 3 /2;
+		this.tTable = new ZobristTranspositionTable();	
+		
+		this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) ;
 		if (this.b.getDimension() >= 7){
 			if (b.getFreeCellCount() < 12){
-				this.depth = 16;
+				this.depth = 12;
 			}			
 			else if (b.getFreeCellCount() < 13){
-				this.depth = 14;
+				this.depth = 13;
 			}
 			else if (b.getFreeCellCount() < 14){
-				this.depth = 12;
+				this.depth = 10;
 				
 			} else if (b.getFreeCellCount() < 16){
-				this.depth = 10;
+				this.depth = 8;
 			}	else if (b.getFreeCellCount() < 20){
 				this.depth = 8;
 			}
 			else{
-				this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) + 1 ;
+				this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2));
 			}
 			
 
 		}
+//		this.depth = 4;
 		// Must be even depth !
 		if (this.depth % 2 != 0){
 			this.depth -= 1;
@@ -226,44 +229,125 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b, Board.CellContent side){
+		
+		// define the 8 directions
+		Point nw = new Point(-1, -1);
+		Point n = new Point(0, -1);
+		Point ne = new Point(1, -1);
+		Point e = new Point(1, 0);
+		Point se = new Point(1, 1);
+		Point s = new Point(0, 1);
+		Point sw = new Point(-1, 1);
+		Point w = new Point(-1, 0);
+		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
+		
+		
 		int side_node = 0;
-	
+		int whiteConstant = 0;
+		int blackConstant = 0;
+		
+		int whiteLayer = 0;
+		int blackLayer = 0;
+		int whiteNeighbourScore = 0;
+		int blackNeighbourScore = 0;
+		
+		int whiteSign = 0;
+		int blackSign = 0;
+		
+
+		//Determining Side
+		if (side == Board.CellContent.WHITE) {
+			whiteSign = 1;
+			blackSign = -1;
+			
+			whiteConstant = 1;
+			blackConstant = 4 ;
+		} else if (side == Board.CellContent.BLACK) {
+			whiteSign = 1;
+			blackSign = -1;
+			
+			whiteConstant = 4;
+			blackConstant = 1;
+		}
+		
+		//Side node scoring
 		if (b.getGrid()[0][0] == side || b.getGrid()[b.getDimension()-1][b.getDimension()-1] == side
 			|| b.getGrid()[b.getDimension()-1][0] == side || b.getGrid()[0][b.getDimension()-1] == side){
-			side_node -= 1;
+			side_node -= 9001;
 		} 
-		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 2 / 3) {
-			int k1 = 0;
-			int k2 = 0;
-			
-			
-			if (side == Board.CellContent.WHITE) {
-				k1 = 1;
-				k2 = -1 * 2;
-			} else if (side == Board.CellContent.BLACK) {
-				k1 = -1 * 2;
-				k2 = 1;
-			}
-			return (((k1 * b.getWhiteScore()) + k1 + (k2 * b.getBlackScore()) + k2) + side_node) * 100;
-		} else {
-			int k1 = 0;
-			int k2 = 0;
+		
+		
+		
+//		//If late game then use the plain scoring
+//		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 2 / 3) {			
+//			return ( 30 * ((whiteConstant * b.getWhiteScore()) + (blackConstant * b.getBlackScore())) + side_node) * 100;
+//		} 
+//		else {
+			//Without early game info, try picking the late outer most layer
+			Point middlePoint = new Point ((b.getDimension()-1)/2,(b.getDimension()-1)/2);
 			for (int i = 0; i < b.getDimension(); i++) {
 				for (int j = 0; j < b.getDimension(); j++) {
+					
 					if (b.getGrid()[i][j] == Board.CellContent.WHITE) {
-						k1 += (Math.abs(b.getDimension()/2 - i) > Math.abs(b.getDimension()/2 - j)) ? Math.abs(b.getDimension()/2 - i) : Math.abs(b.getDimension()/2 - j);
+						int sameNeighbour = 0;
+					
+						
+						whiteLayer += (Math.abs(middlePoint.x - i) > Math.abs(middlePoint.y - j)) ? Math.abs(middlePoint.y - j) : Math.abs(middlePoint.x - i);
+						for (Point dir: directions){
+							Point currentPoint = new Point (i+dir.x,j+dir.y);
+							if (b.checkCellValidity(currentPoint)){
+								if (b.getGrid()[currentPoint.x][currentPoint.y] == Board.CellContent.WHITE){
+									sameNeighbour++;
+								}
+							}
+							// Too clumped up
+							if (sameNeighbour > 2){
+								whiteNeighbourScore -= 1;
+							} else{
+								whiteNeighbourScore += 1;
+							}
+							
+						}
 					}
+					
 					if (b.getGrid()[i][j] == Board.CellContent.BLACK) {
-						k2 += (Math.abs(b.getDimension()/2 - i) > Math.abs(b.getDimension()/2 - j)) ? Math.abs(b.getDimension()/2 - i) : Math.abs(b.getDimension()/2 - j);
+						int sameNeighbour = 0;
+						blackLayer += (Math.abs(middlePoint.x - i) > Math.abs(middlePoint.y - j)) ? Math.abs(middlePoint.y - j) : Math.abs(middlePoint.x - i);
+						for (Point dir: directions){
+							Point currentPoint = new Point (i+dir.x,j+dir.y);
+							if (b.checkCellValidity(currentPoint)){
+								if (b.getGrid()[currentPoint.x][currentPoint.y] == Board.CellContent.BLACK){
+									sameNeighbour++;
+								}
+							}
+							// Too clumped up
+							if (sameNeighbour > 2){
+								blackNeighbourScore -= 1;
+							} else{
+								blackNeighbourScore += 1;
+							}
+						}
+												
 					}
+					
 				}
 			}
-			if (side == Board.CellContent.WHITE){
-				return k1 + (side_node*100);
-			} else {
-				return k2 + (side_node*100) ;
-			}
+			
+		int importance = 0;
+		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 4/5){
+			importance = 0;
+		} else {
+			importance = 5;
 		}
+		
+		int layerScore = importance * ( (whiteSign * whiteLayer) + (blackSign * blackLayer ));
+		int captureScore = 100*(whiteSign * b.getWhiteScore() * whiteConstant + blackSign * b.getBlackScore() * blackConstant);
+		int clumpScore =  10*(whiteNeighbourScore * whiteSign + blackNeighbourScore * blackSign);
+		
+		//return  layerScore + (side_node) + captureScore + clumpScore ;
+		return captureScore + clumpScore;
+	
+		
 	}
 	
 }

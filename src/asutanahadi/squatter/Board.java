@@ -497,7 +497,7 @@ public class Board {
 //	}
 	
 	// Check whether the index is out of bound
-	private boolean checkCellValidity(Point p){
+	protected boolean checkCellValidity(Point p){
 		if ((p.x < this.dimension) && (p.x >= 0)
 				&& (p.y < this.dimension) && (p.y >= 0)) {
 			return true;
