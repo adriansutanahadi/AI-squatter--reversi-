@@ -1,0 +1,79 @@
+617462 asutanahadi Adrian Sutanahadi
+613726 dthamrin Denis Thamrin
+
+N = number of Board Piece
+
+###############################################################################
+# Pseudocode - Loop Checking - Flood Fill Algorithm                           #
+###############################################################################
+
+floodFill(x, y, player)
+    if cell is not valid for exploration
+        return empty list
+    define 4 direction of exploration
+    initialise a stack queue
+    push cell to the queue
+    while queue is not empty                                             O(N)
+        pop the queue
+        if the current cell is valid for exploration
+            record the cell to the list
+            for the cell adjacent in 4 direction to the current cell     O(4)
+                if the adjacent cell is not valid for exploration
+                    return empty
+                if it has not been recorded previously
+                    push it to the queue
+    return the processed cell list
+                                                            Worst Case = O(N)
+
+###############################################################################
+# Pseudocode - Minimax Player with Alpha-Beta Pruning + Zobrist Hashing       #
+###############################################################################
+
+minimax_decision(state, depth)
+    alpha = -infinity
+    beta = +infinity
+    bestScore = -infinity
+    bestMove = null
+
+    for each available valid move                                         O(N)
+        create a new board with 1 added move
+        alpha = max(alpha,                                                 O(N)
+                    minimax_value(new state, depth - 1, alpha, beta, false)
+        if alpha > bestScore
+            record the best move along with the score
+
+minimax_value(state, depth, alpha, beta, maximisingPlayer)
+    if depth = 0 or the game is finished
+        return the evaluation function of the state
+    if there is a better result already available in the zobrist table
+        return the value from the zobrist table
+    if it is the maximising player
+        bestValue = -infinity
+        bestMove = null
+        for each available move                                            O(N)
+            create a new board with 1 added move
+            val = minimax_value(new state, depth - 1, alpha, beta, false)
+            if val > bestScore
+                record the best move along with the score to the zobrist table
+            alpha = max(alpha, bestValue)
+            if beta <= alpha
+                break
+        return bestValue
+    if it is the minimising player
+        bestValue = +infinity
+        bestMove = null
+        for each available move                                            O(N)
+            create a new board with 1 added move
+            val = minimax_value(new state, depth - 1, alpha, beta, true)
+            if val < bestScore
+                record the best move along with the score to the zobrist table
+            alpha = min(beta, bestValue)
+            if beta <= alpha
+                break
+        return bestValue
+                                                                   
+                                                             Worst Case = O(N^2)
+
+The minimax worst case time complexity is O(N^2), however we have also
+implemented pruning and zobrist hashing, which can dramatically improve
+the performance of the search.
