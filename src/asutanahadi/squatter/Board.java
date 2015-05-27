@@ -412,16 +412,19 @@ public class Board {
 		
 		ArrayList<Point> moves = new ArrayList<Point>();
 		ArrayList<Point> front = new ArrayList<Point>();
+		ArrayList<Point> back = new ArrayList<Point>();
 		for (int i = 0; i < this.dimension; i++) {
 			for (int j = 0; j < this.dimension; j++) {
-				//Skip the low value position and add it later
-				if ((i == 0 && j == 0) ||( i == 0 && j == this.dimension - 1) || (i == this.dimension - 1 && j == 0)
-						|| i == this.dimension - 1 && j == this.dimension - 1 ){
-					continue;
-				}
 				
 				if (grid[i][j] == CellContent.FREE){
-					// put the cell in front if it is adjacent to a piece (move ordering)
+					// put the low value node to the back of the list
+					if ((i == 0 && j == 0) ||( i == 0 && j == this.dimension - 1) || (i == this.dimension - 1 && j == 0)
+							|| i == this.dimension - 1 && j == this.dimension - 1 ){
+						back.add(new Point(i, j));
+						continue;
+					}
+
+					// put the cell in front of the list if it is adjacent to a piece
 					boolean putAtFront = false;
 					for (Point dir : directions) {
 						Point neighbourPoint = new Point(i + dir.x, j + dir.y);
@@ -438,28 +441,16 @@ public class Board {
 				}
 			}
 		}
+		
 		// added randomness to make the game less predictable
 		Collections.shuffle(moves);
 		Collections.shuffle(front);
+		Collections.shuffle(back);
 		
 		// add front to the front of the list
 		moves.addAll(0, front);
+		moves.addAll(back);
 
-
-		// Add the low value node to the back of the list
-		if (grid[0][0] == CellContent.FREE){
-			moves.add(new Point(0,0));
-		}
-		if (grid[0][this.dimension - 1] == CellContent.FREE){
-			moves.add(new Point(0,this.dimension - 1));
-		}
-		if (grid[this.dimension - 1][0] == CellContent.FREE){
-			moves.add(new Point(this.dimension - 1,0));
-		}
-		if (grid[this.dimension - 1][this.dimension - 1] == CellContent.FREE){
-			moves.add(new Point(this.dimension - 1,this.dimension - 1));
-		}
-		
 		return moves;
 	}
 	
