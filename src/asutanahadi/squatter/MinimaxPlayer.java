@@ -226,22 +226,44 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 	
 	//Simple Generic Evaluation Function while focusing on preventing getting captured
 	private int evaluate(Board b, Board.CellContent side){
-		int k1 = 0;
-		int k2 = 0;
 		int side_node = 0;
-
+	
 		if (b.getGrid()[0][0] == side || b.getGrid()[b.getDimension()-1][b.getDimension()-1] == side
-				|| b.getGrid()[b.getDimension()-1][0] == side || b.getGrid()[0][b.getDimension()-1] == side){
+			|| b.getGrid()[b.getDimension()-1][0] == side || b.getGrid()[0][b.getDimension()-1] == side){
 			side_node -= 1;
 		} 
-		
-		if (side == Board.CellContent.WHITE) {
-			k1 = 1;
-			k2 = -1 * 2;
-		} else if (side == Board.CellContent.BLACK) {
-			k1 = -1 * 2;
-			k2 = 1;
+		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 2 / 3) {
+			int k1 = 0;
+			int k2 = 0;
+			
+			
+			if (side == Board.CellContent.WHITE) {
+				k1 = 1;
+				k2 = -1 * 2;
+			} else if (side == Board.CellContent.BLACK) {
+				k1 = -1 * 2;
+				k2 = 1;
+			}
+			return (((k1 * b.getWhiteScore()) + k1 + (k2 * b.getBlackScore()) + k2) + side_node) * 100;
+		} else {
+			int k1 = 0;
+			int k2 = 0;
+			for (int i = 0; i < b.getDimension(); i++) {
+				for (int j = 0; j < b.getDimension(); j++) {
+					if (b.getGrid()[i][j] == Board.CellContent.WHITE) {
+						k1 += (Math.abs(b.getDimension()/2 - i) > Math.abs(b.getDimension()/2 - j)) ? Math.abs(b.getDimension()/2 - i) : Math.abs(b.getDimension()/2 - j);
+					}
+					if (b.getGrid()[i][j] == Board.CellContent.BLACK) {
+						k2 += (Math.abs(b.getDimension()/2 - i) > Math.abs(b.getDimension()/2 - j)) ? Math.abs(b.getDimension()/2 - i) : Math.abs(b.getDimension()/2 - j);
+					}
+				}
+			}
+			if (side == Board.CellContent.WHITE){
+				return k1 + (side_node*100);
+			} else {
+				return k2 + (side_node*100) ;
+			}
 		}
-		return ((k1 * b.getWhiteScore()) + k1 + (k2 * b.getBlackScore()) + k2) + side_node;
 	}
+	
 }
