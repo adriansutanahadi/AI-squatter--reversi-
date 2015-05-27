@@ -3,7 +3,7 @@ package asutanahadi.squatter;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class OnePlyMinMaxPlayer extends FirstDumbPlayer {
+public class OnePlyMinMaxPlayer extends FirstRandomPlayer {
 	
 	/* Function called by referee to request a move by the player.
 	 *  Return object of class Move

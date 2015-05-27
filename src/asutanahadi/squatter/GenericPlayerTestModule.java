@@ -11,7 +11,7 @@ public class GenericPlayerTestModule {
 	private int board_size;
 	
 
-	public GenericPlayerTestModule(FirstDumbPlayer p1,FirstDumbPlayer p2,int board_size) {
+	public GenericPlayerTestModule(FirstRandomPlayer p1,FirstRandomPlayer p2,int board_size) {
 		this.P1 = p1;
 		this.P2 = p2;
 		this.board_size = board_size;

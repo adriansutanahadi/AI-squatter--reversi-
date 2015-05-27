@@ -3,7 +3,7 @@ package asutanahadi.squatter;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class LoopCheckingPlayer extends FirstDumbPlayer {
+public class LoopCheckingPlayer extends FirstRandomPlayer {
 	
 	/* Function called by referee to request a move by the player.
 	 *  Return object of class Move

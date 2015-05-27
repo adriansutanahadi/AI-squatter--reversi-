@@ -36,7 +36,7 @@ public class MinimaxPlayerTest {
 	
 	@Test
 	public void smartVsdumb_6(){
-		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new MinimaxPlayer(),6);
+		g = new GenericPlayerTestModule(new FirstRandomPlayer(), new MinimaxPlayer(),6);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
@@ -48,7 +48,7 @@ public class MinimaxPlayerTest {
 	
 	@Test
 	public void smartVsdumb_7(){
-		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new MinimaxPlayer(),7);
+		g = new GenericPlayerTestModule(new FirstRandomPlayer(), new MinimaxPlayer(),7);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {

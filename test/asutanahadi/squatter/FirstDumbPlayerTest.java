@@ -10,7 +10,7 @@ public class FirstDumbPlayerTest {
 	
 	@Test
 	public void dumbVsdumb_7(){
-		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new FirstDumbPlayer(),7);
+		g = new GenericPlayerTestModule(new FirstRandomPlayer(), new FirstRandomPlayer(),7);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {
@@ -22,7 +22,7 @@ public class FirstDumbPlayerTest {
 	
 	@Test
 	public void dumbVsdumb_6(){
-		g = new GenericPlayerTestModule(new FirstDumbPlayer(), new FirstDumbPlayer(),6);
+		g = new GenericPlayerTestModule(new FirstRandomPlayer(), new FirstRandomPlayer(),6);
 		try {
 			g.refreeTest();
 		} catch (Exception e) {

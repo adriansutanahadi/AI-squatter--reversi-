@@ -10,7 +10,7 @@ import javax.naming.directory.SearchResult;
 
 
 // Idea for Zohrist from AI for games second edition
-public class ZobristMTDfPlayer extends FirstDumbPlayer {
+public class ZobristMTDfPlayer extends FirstRandomPlayer {
 	
 	ZobristBoard b;
 	ZobristHash z;

@@ -7,13 +7,13 @@ import java.util.Random;
 
 import asutanahadi.squatter.Board.CellContent;
 
-public class FirstDumbPlayer implements Player, Piece {
+public class FirstRandomPlayer implements Player, Piece {
 	protected Board b;
 	private Boolean illegalMoveMade = false;
 	protected int playerSide;
 	Random rand;
 	
-	/* This funstion is called by the referee to initialise the player.
+	/* This function is called by the referee to initialise the player.
 	 *  Return 0 for successful initialization and -1 for failed one.
 	 */
 	@Override

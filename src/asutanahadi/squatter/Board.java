@@ -399,9 +399,19 @@ public class Board {
 	 * Around there to block or create loop
 	 */ 
 	public ArrayList<Point> getMove(){
+		// define the 8 directions
+		Point nw = new Point(-1, -1);
+		Point n = new Point(0, -1);
+		Point ne = new Point(1, -1);
+		Point e = new Point(1, 0);
+		Point se = new Point(1, 1);
+		Point s = new Point(0, 1);
+		Point sw = new Point(-1, 1);
+		Point w = new Point(-1, 0);
+		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
+		
 		ArrayList<Point> moves = new ArrayList<Point>();
-		int moves_index = -1;
-		int front = 0;
+		ArrayList<Point> front = new ArrayList<Point>();
 		for (int i = 0; i < this.dimension; i++) {
 			for (int j = 0; j < this.dimension; j++) {
 				//Skip the low value position and add it later
@@ -411,22 +421,32 @@ public class Board {
 				}
 				
 				if (grid[i][j] == CellContent.FREE){
-					moves.add(new Point(i,j));
-					moves_index++;
-				} else if (grid[i][j] == CellContent.BLACK || grid[i][j] == CellContent.WHITE) {
-					if (moves_index >= 0){
-						Collections.swap(moves, moves_index, front);
-						if (front<moves_index) front++;
+					// put the cell in front if it is adjacent to a piece (move ordering)
+					boolean putAtFront = false;
+					for (Point dir : directions) {
+						Point neighbourPoint = new Point(i + dir.x, j + dir.y);
+						if (checkCellValidity(neighbourPoint) && (grid[neighbourPoint.x][neighbourPoint.y] == CellContent.BLACK || grid[neighbourPoint.x][neighbourPoint.y] == CellContent.WHITE)) {
+							putAtFront = true;
+							break;
+						}
+					}
+					if (putAtFront) {
+						front.add(new Point(i, j));
+					} else {
+						moves.add(new Point(i, j));
 					}
 				}
-				
 			}
-			
-
-			
 		}
+		// added randomness to make the game less predictable
+		Collections.shuffle(moves);
+		Collections.shuffle(front);
+		
+		// add front to the front of the list
+		moves.addAll(0, front);
 
-		//Add back the low value node
+
+		// Add the low value node to the back of the list
 		if (grid[0][0] == CellContent.FREE){
 			moves.add(new Point(0,0));
 		}

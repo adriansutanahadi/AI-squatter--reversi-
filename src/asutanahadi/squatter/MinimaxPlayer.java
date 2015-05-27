@@ -5,7 +5,7 @@ import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MinimaxPlayer extends FirstDumbPlayer {
+public class MinimaxPlayer extends FirstRandomPlayer {
 	
 	private ZobristBoard b;		
 	private ZobristHash z;
@@ -65,24 +65,24 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 		Move m = new Move();
 		this.tTable = new ZobristTranspositionTable();	
 		
-		this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) ;
+		this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) ;
 		if (this.b.getDimension() >= 7){
-			if (b.getFreeCellCount() < 12){
-				this.depth = 12;
+			if (b.getFreeCellCount() < 10){
+				this.depth = 10;
 			}			
-			else if (b.getFreeCellCount() < 13){
-				this.depth = 13;
+			else if (b.getFreeCellCount() < 11){
+				this.depth = 11;
 			}
 			else if (b.getFreeCellCount() < 14){
-				this.depth = 10;
+				this.depth = 8;
 				
 			} else if (b.getFreeCellCount() < 16){
-				this.depth = 8;
+				this.depth = 6;
 			}	else if (b.getFreeCellCount() < 20){
-				this.depth = 8;
+				this.depth = 6;
 			}
 			else{
-				this.depth = (int) (7.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2));
+				this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2));
 			}
 			
 
@@ -263,14 +263,14 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 			whiteConstant = 1;
 			blackConstant = 4 ;
 		} else if (side == Board.CellContent.BLACK) {
-			whiteSign = 1;
-			blackSign = -1;
+			whiteSign = -1;
+			blackSign = 1;
 			
 			whiteConstant = 4;
 			blackConstant = 1;
 		}
 		
-		//Side node scoring
+		// Side node scoring
 		if (b.getGrid()[0][0] == side || b.getGrid()[b.getDimension()-1][b.getDimension()-1] == side
 			|| b.getGrid()[b.getDimension()-1][0] == side || b.getGrid()[0][b.getDimension()-1] == side){
 			side_node -= 9001;
@@ -289,63 +289,72 @@ public class MinimaxPlayer extends FirstDumbPlayer {
 				for (int j = 0; j < b.getDimension(); j++) {
 					
 					if (b.getGrid()[i][j] == Board.CellContent.WHITE) {
-						int sameNeighbour = 0;
-					
 						
+						// positioning of the piece (nearer to board side = the better)
+						// only applies at early game (controlled by the variable importance below)
 						whiteLayer += (Math.abs(middlePoint.x - i) > Math.abs(middlePoint.y - j)) ? Math.abs(middlePoint.y - j) : Math.abs(middlePoint.x - i);
+
+						// check for neighboring points and gives penalty if it tries to clump
+						int sameNeighbour = 0;
 						for (Point dir: directions){
+							
 							Point currentPoint = new Point (i+dir.x,j+dir.y);
 							if (b.checkCellValidity(currentPoint)){
 								if (b.getGrid()[currentPoint.x][currentPoint.y] == Board.CellContent.WHITE){
 									sameNeighbour++;
 								}
 							}
-							// Too clumped up
+							
 							if (sameNeighbour > 2){
 								whiteNeighbourScore -= 1;
-							} else{
+							} else {
 								whiteNeighbourScore += 1;
 							}
-							
 						}
 					}
 					
 					if (b.getGrid()[i][j] == Board.CellContent.BLACK) {
-						int sameNeighbour = 0;
+						
+						// positioning of the piece (nearer to board side = the better)
+						// only applies at early game (controlled by the variable importance below)
 						blackLayer += (Math.abs(middlePoint.x - i) > Math.abs(middlePoint.y - j)) ? Math.abs(middlePoint.y - j) : Math.abs(middlePoint.x - i);
+
+						// check for neighboring points and gives penalty if it tries to clump
+						int sameNeighbour = 0;
 						for (Point dir: directions){
+							
 							Point currentPoint = new Point (i+dir.x,j+dir.y);
 							if (b.checkCellValidity(currentPoint)){
 								if (b.getGrid()[currentPoint.x][currentPoint.y] == Board.CellContent.BLACK){
 									sameNeighbour++;
 								}
 							}
-							// Too clumped up
+							
 							if (sameNeighbour > 2){
 								blackNeighbourScore -= 1;
 							} else{
 								blackNeighbourScore += 1;
 							}
-						}
-												
+						}					
 					}
-					
 				}
 			}
 			
-		int importance = 0;
-		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 4/5){
-			importance = 0;
-		} else {
-			importance = 5;
+		int layerImportance = 0;
+		int captureImportance = 100;
+		int clumpImportance = 10;
+
+		// determine whether it is early game or not
+		if (b.getFreeCellCount() > b.getDimension() * b.getDimension() * 4/5) {
+			layerImportance = 5;
 		}
 		
-		int layerScore = importance * ( (whiteSign * whiteLayer) + (blackSign * blackLayer ));
-		int captureScore = 100*(whiteSign * b.getWhiteScore() * whiteConstant + blackSign * b.getBlackScore() * blackConstant);
-		int clumpScore =  10*(whiteNeighbourScore * whiteSign + blackNeighbourScore * blackSign);
+		int layerScore = layerImportance * ( (whiteSign * whiteLayer) + (blackSign * blackLayer));
+		int captureScore = captureImportance * (whiteSign * b.getWhiteScore() * whiteConstant + blackSign * b.getBlackScore() * blackConstant);
+		int clumpScore =  clumpImportance * (whiteNeighbourScore * whiteSign + blackNeighbourScore * blackSign);
 		
 		//return  layerScore + (side_node) + captureScore + clumpScore ;
-		return captureScore + clumpScore;
+		return layerScore + captureScore + clumpScore + side_node;
 	
 		
 	}
