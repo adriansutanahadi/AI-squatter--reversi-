@@ -23,9 +23,9 @@ public class Board {
 	private Integer dimension;
 	private Integer blackScore;
 	private Integer whiteScore;
-	protected Integer freeCellCount;
-	protected CellContent[][] grid = null;
-	protected ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
+	private Integer freeCellCount;
+	private CellContent[][] grid = null;
+	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
 	ArrayList<ArrayList<Point>> loops;
 	//private boolean finished = false;
@@ -48,14 +48,18 @@ public class Board {
 	}
 
 	public boolean isFinished() {
-		return (freeCellCount == 0);
+		return (getFreeCellCount() == 0);
 	}
 	
 	public Integer getFreeCellCount() {
 		return freeCellCount;
 	}
+	
+	protected void setFreeCellCount(Integer freeCellCount) {
+		this.freeCellCount = freeCellCount;
+	}
 
-	public ArrayList<Point> getCapturedCellsMap() {
+	protected ArrayList<Point> getCapturedCellsMap() {
 		return capturedCellsMap;
 	}
 
@@ -91,7 +95,7 @@ public class Board {
 				
 			}
 		}
-		this.freeCellCount = dimension*dimension;
+		this.setFreeCellCount(dimension*dimension);
 	}
 	
 	public Board(Board b) {
@@ -99,7 +103,7 @@ public class Board {
 		grid = new CellContent[dimension][dimension];
 		this.whiteScore = b.getWhiteScore();
 		this.blackScore = b.getBlackScore();
-		this.freeCellCount = b.getFreeCellCount();
+		this.setFreeCellCount(b.getFreeCellCount());
 		this.capturedCellsMap = new ArrayList<Point>(b.getCapturedCellsMap());
 		Board.copy_grid(this, b);
 	}
@@ -108,7 +112,7 @@ public class Board {
 	public Boolean addPiece(int x, int y, CellContent player) {
 		if (grid[x][y] == CellContent.FREE){
 			grid[x][y] = player;
-			freeCellCount--;
+			setFreeCellCount(getFreeCellCount() - 1);
 			updateBoard(x, y, player);
 			try {
 				updateScore();
@@ -140,7 +144,7 @@ public class Board {
 				case FREE:
 					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
 					capturedCellsMap.add(new Point(p.x, p.y));
-					freeCellCount--;
+					setFreeCellCount(getFreeCellCount() - 1);
 					break;
 				case BLACK:
 					grid[p.x][p.y] = CellContent.CAPTURED_BLACK;
@@ -157,7 +161,7 @@ public class Board {
 				case FREE:
 					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
 					capturedCellsMap.add(new Point(p.x, p.y));
-					freeCellCount--;
+					setFreeCellCount(getFreeCellCount() - 1);
 					break;
 				case WHITE:
 					grid[p.x][p.y] = CellContent.CAPTURED_WHITE;
@@ -632,6 +636,8 @@ public class Board {
 		this.blackScore = blackScore;
 		this.whiteScore = whiteScore;
 	}
+
+
 	
 }
 

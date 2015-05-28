@@ -39,9 +39,9 @@ public class ZobristBoard extends Board {
 		} else if (player == CellContent.WHITE) {
 			player_key = 1;
 		}
-		if (grid[x][y] == CellContent.FREE){
-			grid[x][y] = player;
-			freeCellCount--;
+		if (super.getGrid()[x][y] == CellContent.FREE){
+			super.getGrid()[x][y] = player;
+			setFreeCellCount(getFreeCellCount() - 1);
 			updateBoard(x, y, player);
 			//this.board_hash = z.getHash(this);
 			//TODO
@@ -73,50 +73,50 @@ public class ZobristBoard extends Board {
 		capturedTop.addAll(capturedBottom);
 		capturedTop.addAll(capturedRight);
 		for (Point p : capturedTop) {
-			CellContent piece = grid[p.x][p.y];
+			CellContent piece = super.getGrid()[p.x][p.y];
 			
 			// convert the piece to the captured ones if it is inside the polygon(loop)
 			if (player == CellContent.WHITE) {
 				switch (piece) {
 				case FREE:
-					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
+					super.getGrid()[p.x][p.y] = CellContent.CAPTURED_FREE;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][4];
-					capturedCellsMap.add(new Point(p.x, p.y));
-					freeCellCount--;
+					getCapturedCellsMap().add(new Point(p.x, p.y));
+					setFreeCellCount(getFreeCellCount() - 1);
 					break;
 				case BLACK:
-					grid[p.x][p.y] = CellContent.CAPTURED_BLACK;
+					super.getGrid()[p.x][p.y] = CellContent.CAPTURED_BLACK;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][0];
 					board_hash = board_hash ^ z.getZobristKey()[x][y][3];
-					capturedCellsMap.add(new Point(p.x, p.y));
+					getCapturedCellsMap().add(new Point(p.x, p.y));
 					break;
 				case CAPTURED_WHITE:
-					grid[p.x][p.y] = CellContent.WHITE;
+					super.getGrid()[p.x][p.y] = CellContent.WHITE;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][2];
 					board_hash = board_hash ^ z.getZobristKey()[x][y][1];
-					capturedCellsMap.remove(new Point(p.x, p.y));
+					getCapturedCellsMap().remove(new Point(p.x, p.y));
 					break;
 				default:
 				}
 			} else if (player == CellContent.BLACK) {
 				switch (piece) {
 				case FREE:
-					grid[p.x][p.y] = CellContent.CAPTURED_FREE;
+					super.getGrid()[p.x][p.y] = CellContent.CAPTURED_FREE;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][4];
-					capturedCellsMap.add(new Point(p.x, p.y));
-					freeCellCount--;
+					getCapturedCellsMap().add(new Point(p.x, p.y));
+					setFreeCellCount(getFreeCellCount() - 1);
 					break;
 				case WHITE:
-					grid[p.x][p.y] = CellContent.CAPTURED_WHITE;
+					super.getGrid()[p.x][p.y] = CellContent.CAPTURED_WHITE;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][1];
 					board_hash = board_hash ^ z.getZobristKey()[x][y][2];
-					capturedCellsMap.add(new Point(p.x, p.y));
+					getCapturedCellsMap().add(new Point(p.x, p.y));
 					break;
 				case CAPTURED_BLACK:
-					grid[p.x][p.y] = CellContent.BLACK;
+					super.getGrid()[p.x][p.y] = CellContent.BLACK;
 					board_hash = board_hash ^ z.getZobristKey()[x][y][3];
 					board_hash = board_hash ^ z.getZobristKey()[x][y][0];
-					capturedCellsMap.remove(new Point(p.x, p.y));
+					getCapturedCellsMap().remove(new Point(p.x, p.y));
 					break;
 				default:
 				}
