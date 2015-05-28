@@ -46,6 +46,8 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 		this.tTable = new ZobristTranspositionTable();	
 		
 		this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) ;
+		
+		
 		if (this.b.getDimension() >= 7){
 			if (b.getFreeCellCount() < 10){
 				this.depth = 10;
@@ -66,13 +68,23 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 			}
 			
 
+		} else if (this.b.getDimension() == 6){
+			if (b.getFreeCellCount() < 10){
+				this.depth = 10;
+			}			
+			else if (b.getFreeCellCount() < 11){
+				this.depth = 12;
+			}
+			else{
+				this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2));
+			}			
 		}
 
 		// Must be even depth ! (ai performs poorly on odd )
 		if (this.depth % 2 != 0){
 			this.depth -= 1;
 		}
-		//System.out.println("Depth is = " + this.depth);
+		System.out.println("Depth is = " + this.depth);
 		Point best_move = minimax_decision(b, depth);
 		m.P = this.playerSide;
 		m.Col = best_move.x;
