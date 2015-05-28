@@ -27,7 +27,7 @@ public class Board {
 	private CellContent[][] grid = null;
 	private ArrayList<Point> capturedCellsMap = new ArrayList<Point>();
 	private ArrayList<CellContent> capturedCellsOwner;
-	ArrayList<ArrayList<Point>> loops;
+	private ArrayList<ArrayList<Point>> loops;
 	//private boolean finished = false;
 	
 	// Getters Setters
