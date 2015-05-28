@@ -5,6 +5,7 @@ import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Collections;
 
+//Check First Random Player for more info
 public class MinimaxPlayer extends FirstRandomPlayer {
 	
 	private ZobristBoard b;		
@@ -26,28 +27,7 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 			// Board can be white,black ,white captured,black captured or empty		
 
 			this.tTable = new ZobristTranspositionTable();		
-
-			
-//			//Test function
-//			ZobristBoard currentBoard = new ZobristBoard(this.b,this.z);
-//			currentBoard.addPiece(0, 0, playerSidetoBoardSide(true));
-//			currentBoard.addPiece(1, 0, playerSidetoBoardSide(false));
-//			currentBoard.addPiece(0, 1, playerSidetoBoardSide(true));
-//			System.out.println(currentBoard.board_hash);
-//
-//			
-//			ZobristBoard similarBoard = new ZobristBoard(this.b,this.z);
-//			similarBoard.addPiece(0, 1, playerSidetoBoardSide(true));
-//			similarBoard.addPiece(1, 0, playerSidetoBoardSide(false));
-//			similarBoard.addPiece(0, 0, playerSidetoBoardSide(true));
-//			System.out.println(similarBoard.board_hash);
-//			
-//			
-//			ZobristBoard differentBoard = new ZobristBoard(this.b,this.z);
-//			differentBoard.addPiece(0, 2, playerSidetoBoardSide(true));
-//			differentBoard.addPiece(1, 0, playerSidetoBoardSide(false));
-//			differentBoard.addPiece(0, 0, playerSidetoBoardSide(true));
-//			System.out.println(differentBoard.board_hash);			
+		
 			return 0;		
 		} 		
 		else {		
@@ -74,37 +54,36 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 				this.depth = 11;
 			}
 			else if (b.getFreeCellCount() < 14){
-				this.depth = 8;
+				this.depth = 10;
 				
 			} else if (b.getFreeCellCount() < 16){
-				this.depth = 6;
+				this.depth = 8;
 			}	else if (b.getFreeCellCount() < 20){
 				this.depth = 6;
 			}
 			else{
-				this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2));
+				this.depth = (int) (8.5 - Math.pow(((b.getFreeCellCount() * 2) / Math.pow(b.getDimension(), 2)), 2)) -1;
 			}
 			
 
 		}
-//		this.depth = 4;
-		// Must be even depth !
+
+		// Must be even depth ! (ai performs poorly on odd )
 		if (this.depth % 2 != 0){
 			this.depth -= 1;
 		}
-		System.out.println("Depth is = " + this.depth);
-		//this.depth = 10;
+		//System.out.println("Depth is = " + this.depth);
 		Point best_move = minimax_decision(b, depth);
 		m.P = this.playerSide;
 		m.Col = best_move.x;
 		m.Row = best_move.y;
 		b.addPiece(m.Col, m.Row, playerSidetoBoardSide(true));
-//		this.tTable.printStatistic();
-		// check if there is a piece on that position.
+
 		return m;
 	}
 	
-	// Evaluate all possible moves with depth 1 and return the best one
+	// Evaluate all possible moves with depth depth and return the best one
+	// A minimax with alpha beta pruning + transposition table to avoid opening the same node
 	private Point minimax_decision(ZobristBoard state, int depth){
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
@@ -144,6 +123,7 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 			return evaluate(state, playerSidetoBoardSide(maximizingPlayer));
 		}
 		ArrayList<Point> moves = state.getMove();
+		// State in entry, no need to recalculate just ask from the table !
 		ZobristTableEntry entry = tTable.getEntry(state.board_hash);
 		if (entry != null){	
 			if (entry.depth >= this.depth - depth){
@@ -165,6 +145,7 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 				if (val > bestValue){
 					bestValue = val;
 					bestMove = move;
+					// Store the entry into the table 
 					ZobristTableEntry newEntry = new ZobristTableEntry();
 					newEntry.hashValue = currentBoard.board_hash;
 					newEntry.maxScore = val;
@@ -191,6 +172,7 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 				if (val < bestValue){
 					bestValue = val;
 					bestMove = move;
+					// Store the entry into the table 
 					ZobristTableEntry newEntry = new ZobristTableEntry();
 					newEntry.hashValue = currentBoard.board_hash;
 					newEntry.minScore = val;
@@ -207,7 +189,8 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 		}
 	}
 	
-	//Move order the array of moves so that the best one will be opened first
+	// Move order the array of moves so that the best one will be opened first
+	// Unused feature as it fails to work
 	private void move_order(Point highPriorityMove, ArrayList<Point> moves){
 		int bestIndex = 0;
 		int i = 0;
@@ -227,7 +210,17 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 		Collections.swap(moves, bestIndex, 0);
 	}
 	
-	//Simple Generic Evaluation Function while focusing on preventing getting captured
+	/*Advanced Evaluation Function while focusing on preventing getting captured
+	* layerScore + captureScore + clumpScore + side_node;
+	* LayerScore = During Early game, the further from the center, the more chance
+	* 	to capture someone later in the game. Also can't be captured easily if you are away from the center
+	* CaptureScore = The point of the game is to capture, thus giving a very high importance !
+	* ClumpScore = Best Feature we have where we want the player to not clump together in a position
+	* 	It's strategic if there 2 neighbourhing node (more chance to capture) but
+	* 	If it's more than 2 it shows clumping which has no value to the game.
+	* Side_node = 4 useless edges has bad weight -9001
+	*/
+
 	private int evaluate(Board b, Board.CellContent side){
 		
 		// define the 8 directions
@@ -242,7 +235,7 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 		Point[] directions = new Point[] {n, e, s, w, nw, ne, se, sw};
 		
 		
-		int side_node = 0;
+		int sideNode = 0;
 		int whiteConstant = 0;
 		int blackConstant = 0;
 		
@@ -270,20 +263,14 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 			blackConstant = 1;
 		}
 		
-		// Side node scoring
+		// 4 edges of board has no value in this game, give it a huge penalty score
 		if (b.getGrid()[0][0] == side || b.getGrid()[b.getDimension()-1][b.getDimension()-1] == side
 			|| b.getGrid()[b.getDimension()-1][0] == side || b.getGrid()[0][b.getDimension()-1] == side){
-			side_node -= 9001;
+			sideNode -= 9001;
 		} 
 		
 		
-		
-//		//If late game then use the plain scoring
-//		if (b.getFreeCellCount() < b.getDimension() * b.getDimension() * 2 / 3) {			
-//			return ( 30 * ((whiteConstant * b.getWhiteScore()) + (blackConstant * b.getBlackScore())) + side_node) * 100;
-//		} 
-//		else {
-			//Without early game info, try picking the late outer most layer
+
 			Point middlePoint = new Point ((b.getDimension()-1)/2,(b.getDimension()-1)/2);
 			for (int i = 0; i < b.getDimension(); i++) {
 				for (int j = 0; j < b.getDimension(); j++) {
@@ -340,21 +327,24 @@ public class MinimaxPlayer extends FirstRandomPlayer {
 				}
 			}
 			
+		// Prioritize capturing an enemy cell, because that's the point of the game
 		int layerImportance = 0;
 		int captureImportance = 100;
 		int clumpImportance = 10;
 
-		// determine whether it is early game or not
+		// determine whether it is early game or not if yes take the outer most layer node
 		if (b.getFreeCellCount() > b.getDimension() * b.getDimension() * 4/5) {
 			layerImportance = 5;
 		}
 		
 		int layerScore = layerImportance * ( (whiteSign * whiteLayer) + (blackSign * blackLayer));
 		int captureScore = captureImportance * (whiteSign * b.getWhiteScore() * whiteConstant + blackSign * b.getBlackScore() * blackConstant);
+		
+
 		int clumpScore =  clumpImportance * (whiteNeighbourScore * whiteSign + blackNeighbourScore * blackSign);
 		
 		//return  layerScore + (side_node) + captureScore + clumpScore ;
-		return layerScore + captureScore + clumpScore + side_node;
+		return layerScore + captureScore + clumpScore + sideNode;
 	
 		
 	}

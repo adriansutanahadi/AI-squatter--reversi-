@@ -5,7 +5,11 @@ import java.util.ArrayList;
 
 import asutanahadi.squatter.Board.CellContent;
 
-
+/*
+ * Board that implements zobrist hashing to store the state of the table as a hash.
+ * Uses incremental zobrist hashing where full board hash need to be calculated once only
+ * And the next just need to xor the new piece
+ */
 public class ZobristBoard extends Board {
 	protected long board_hash; 
 	private ZobristHash z;
@@ -23,10 +27,12 @@ public class ZobristBoard extends Board {
 		board_hash = b.board_hash;
 	}
 	
+	/*
+	 * AddPiece to board plus hash the extra piece O(1)	  
+	 */
 	@Override
 	public Boolean addPiece(int x, int y, CellContent player) {
-		//make a dictionary 0 = BLACk 1 = WHITE 2= Capture white 3= Captured Black 4= Captured Free
-		// Everytime grid is set, you need to add the hash to the zobirst hash 
+		//0 = BLACk 1 = WHITE 2= Capture white 3= Captured Black 4= Captured Free
 		int player_key = 0;
 		if (player == CellContent.BLACK) {
 			player_key = 0;
@@ -55,7 +61,9 @@ public class ZobristBoard extends Board {
 		}
 		
 	}
-	//make a dictionary 0 = BLACk 1 = WHITE 2= Capture white 3= Captured Black 4= Captured Free
+	/*
+	 * Similar to superclass implementation but it hashes the captured cell O(1)	  
+	 */
 	protected void updateBoard(int x, int y, CellContent player) {
 		ArrayList<Point> capturedTop = floodFill(x, y-1, player);
 		ArrayList<Point> capturedLeft = floodFill(x+1, y, player);

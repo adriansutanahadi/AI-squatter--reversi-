@@ -8,10 +8,17 @@ import javax.print.attribute.HashAttributeSet;
 import asutanahadi.squatter.Board.CellContent;
 
 
-// Adapted from Artificial Intelligence for Games 
-// Class to calculate and initialize a zobrist table
+/*
+ * 
+ * Adapted from Artificial Intelligence for Games
+ * Class to calculate and initialize a zobrist hash
+ * Complexity O(n) where n is board size
+ * Basically it initialize the hash for each postion on the board and each state
+ * 0 = BLACk 1 = WHITE 2= Capture white 3= Captured Black 4 = Captured Free
+ * Empty cell need not to be hashed
+ */
 public class ZobristHash {
-	//make a dictionary 0 = BLACk 1 = WHITE 2= Capture white 3= Captured Black 4 = Captured Free
+
 	private final int PIECE_TYPE = 5;
 
 	
@@ -31,8 +38,10 @@ public class ZobristHash {
 		initZobristKey();
 	}
 	
-	// Hash the each non empty element of the board xoring it to return
-	// a single hash
+	/*
+	 * Hash the each non empty element of the board xoring it to return
+	 * a single hash
+	 */
 	public long getHash(Board b){
 		long result = 0;
 		for (int i = 0; i < b.getDimension(); i++) {

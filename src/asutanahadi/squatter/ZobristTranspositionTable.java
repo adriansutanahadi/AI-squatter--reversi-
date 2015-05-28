@@ -6,13 +6,19 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 
-// Holds the hash table and also encapsulating what is the entry
+/*
+ *  Holds the hashtable entry
+ *  Adatped from Artificial intelligence for games
+ *  Transposition Table act as a memoization (dynamic programming) for all the moves that we opened up.
+ *  That saying we don't need to open a previously checked node thus saving the time to traverse.
+ *  It identifies a state by it's hash value.
+ *  Get Entry O(1)
+ *  Store Entry O(1)
+ *  It just uses TABLE_SIZE amount of memory + entries.
+ *  
+ */
 public class ZobristTranspositionTable {
-//	private static int hashCollision = 0;
-//	private static int hashNotFound = 0;
-//	private static int hashFound = 0;
-//	private static int hashSwapped = 0;
-//	private static int newHash = 0;
+
 	
 	private final int TABLE_SIZE = 500;
 	private ZobristTableEntry[] table = null;
@@ -26,14 +32,13 @@ public class ZobristTranspositionTable {
 	}
 	
 	public ZobristTableEntry getEntry(long hashValue){
-		// Need non negative modulo
+
 		ZobristTableEntry entry = table[(((int) hashValue % TABLE_SIZE) + TABLE_SIZE) % TABLE_SIZE];
 		if (entry == null){
-			//hashNotFound++;
+
 
 			return null;
 		} else if (entry.hashValue == hashValue) {
-			//hashFound++;
 
 			return entry;
 		} else {
@@ -46,9 +51,9 @@ public class ZobristTranspositionTable {
 		//Always replace the current entry
 		int index = (((int) entry.hashValue % TABLE_SIZE) + TABLE_SIZE) % TABLE_SIZE;
 		if( this.table[index] != null ){
-			//hashCollision++;
+
 			if (entry.depth > this.table[index].depth){
-				//hashSwapped++;
+
 
 				this.table[index ] = entry;
 			}
@@ -59,19 +64,12 @@ public class ZobristTranspositionTable {
 
 	}
 	
+	//Used in experimental player(MTDF player) but not in minimax.
 	public static enum ScoreType {
 		ACCURATE,
 		FAIL_LOW,
 		FAIL_HIGH
 	}
-	
-//	public void printStatistic(){
-//		System.out.println("Collided " + hashCollision + " Found " + hashFound + " Not Found " + hashNotFound
-//			+	" Swapped " + hashSwapped + " newhash " + newHash);
-//	}
-	
-	
-	
 
 	
 	
